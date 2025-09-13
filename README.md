@@ -1,4 +1,4 @@
-# GridCut: THE VIDEOGAME
+# Name of Project.
 
 # TODO List
 - [ ] 
