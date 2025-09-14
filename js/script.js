@@ -51,22 +51,65 @@ function vec2(x, y) {
     return {x: x, y: y};
 }
 
+class ball {
+    constructor(pos) {
+        this.pos = pos;
+        this.pos.z = 30;
+        this.velocity = vec2(0, 0);
+        this.velocity.z = 2;
+        this.gravity = 9.8;
+    }
+    update() {
+        this.pos.x += this.velocity.x * dt;
+        this.pos.y += this.velocity.y * dt;
+        this.pos.z += this.velocity.z * dt;
+    
+        this.velocity.z -= this.gravity * dt; // gravity pulls down
+    
+        if (this.pos.z <= 0) {
+            this.pos.z = 0;
+            this.velocity.z = -this.velocity.z * 0.7; // bounce
+        }
+    }
 
+    draw() {
+        ctx.fillRect(this.pos.x, this.pos.y, 2, 2);
+        ctx.fillRect(this.pos.x - 1, this.pos.y-this.pos.z, 4, 4);
+    }
+}
+let Ball = new ball(vec2(50, 90));
+let lastTime = performance.now();
+let dt = 0;
 function gameUpdate() {
-
+    let now = performance.now();
+    dt = (now - lastTime) / 1000; // convert ms to seconds
+    lastTime = now;
 }
 
 function gameDraw() {
-
+    Ball.draw();
+    Ball.update();
 }
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    window.requestAnimationFrame(gameLoop);
-    
     gameUpdate();
     gameDraw()
+    window.requestAnimationFrame(gameLoop);
+    
 }
+
+document.addEventListener("keydown", e => {
+    if (e.key === "ArrowUp") { // spacebar hit
+        Ball.velocity.z = 15;             // go upward
+        Ball.velocity.y = -15;     // move forward
+    }
+
+    if (e.key === "ArrowDown") { // spacebar hit
+        Ball.velocity.z = 15;             // go upward
+        Ball.velocity.y = 15;     // move forward
+    }
+});
 
 gameLoop();
