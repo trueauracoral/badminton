@@ -29,7 +29,7 @@ p {
 
 canvas {
     image-rendering: pixelated;
-    background-color: #ffff;
+    background-color: #d9924a;
     border: 2px solid black;
     font-smooth: never;
     -webkit-font-smoothing: none;
