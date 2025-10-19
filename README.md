@@ -2,8 +2,8 @@
 
 # TODO List
 - Art
-    - [ ] Ball at different sizes
-    - [ ] Net
+    - [X] Ball at different sizes
+    - [X] Net
     - [X] Character
         - [X] Run
             - [X] Side
@@ -18,13 +18,14 @@
             - [X] Forward
             - [X] Backward
     - [ ] Player 2
-- [ ] Code Animation player
-- [ ] Player collision box
+- [X] Code Animation player
 - [ ] Ball Collision
-    - [ ] Player
+    - [X] (10/19/25) Player
     - [ ] Net 
-- [ ] Make ball bounce
-- [ ] Make ball change size as Y changes
+- [X] Make ball bounce
+- [ ] Make ball change size as Y changes (???)
+- [ ] Dash
+- [X] (10/13/25)Fix diagonals
 # Devlog
 ## 9/12/25
 Setup project working on ball bounce have idea. 2d badminton like mario tennis top down. Implemented ball bouncing physics
@@ -50,3 +51,16 @@ Implemented Jump.
 - You can now change the sprite when the left, right, up, down keys are pressed.
 - Tried to make it work on hit but it breaks for some reason.
 - It also works to give the hit animation when needed
+## 10/12/25
+- Implemented animation player it animates when player moves.
+## 10/13/25 
+- Normalized the diagonal movement.
+## 10/17/25
+- Made ball bigger
+- Made player shadow sprite
+- Positioned Hitbox better.
+- Researched how to do circle to square collisions. Probably better than doing square to square.
+## 10/19/25
+- Implemented Circle Hitbox
+- Implemented Circle to square collisions using code from:
+    - https://www.jeffreythompson.org/collision-detection/circle-rect.php

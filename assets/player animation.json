@@ -193,7 +193,7 @@
    { "name": "Left", "from": 6, "to": 6, "direction": "forward" },
    { "name": "Right", "from": 7, "to": 7, "direction": "forward" },
    { "name": "Walk Forward", "from": 8, "to": 10, "direction": "forward" },
-   { "name": "Walk Back", "from": 11, "to": 13, "direction": "forward" },
+   { "name": "Walk Backward", "from": 11, "to": 13, "direction": "forward" },
    { "name": "Walk Right", "from": 14, "to": 17, "direction": "forward" },
    { "name": "Walk Left", "from": 18, "to": 21, "direction": "forward" }
   ],
