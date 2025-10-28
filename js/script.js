@@ -17,16 +17,11 @@ function createAudio(src) {
     return audio;
 }
 
-function drawPixelText(text, x, y, outline, color="black") {
+function drawPixelText(text, x, y, outline=false, color="black") {
     ctx.imageSmoothingEnabled = false; 
     ctx.textBaseline = 'top';
     ctx.fillStyle = color; 
-    
-    charLength = text.toString().length;
-    if (charLength == 2) {
-        x -= 4
-    }
-
+    ctx.font = "16px Arial";
     if (outline) {
         ctx.fillStyle = "#ffffff";
         ctx.lineWidth = 2;
@@ -50,9 +45,26 @@ let height = canvas.height / scalingFactor
 const halfWidth = width / 2;
 const halfHeight = height / 2;
 
+const sideView = document.getElementById('sideView');
+
+const sideview = sideView.getContext('2d');
+let sideScaleFactor = 2;
+sideView.width = 100 * sideScaleFactor;
+sideView.height = 25 * sideScaleFactor;
+let sideViewWidth = sideView.width / scalingFactor
+let sideViewHeight = sideView.height / scalingFactor
+const halfSideWidth = sideViewWidth / 2;
+const halfHeightHeight = sideViewHeight / 2;
+sideview.scale(sideScaleFactor, sideScaleFactor);
+
 ctx.imageSmoothingEnabled= false;
+// Net
 let net = loadImage("./assets/net.png");
+let netX = halfWidth - 233/2;
+let netY = height*0.4;
+let netH = 65;
 let ballImage = loadImage('./assets/ball.png');
+// Ball
 let ballShadow = loadImage('./assets/ball-shadow.png')
 let playerSprite = loadImage("./assets/player animation.png");
 let playerShadow = loadImage("./assets/player shadow.png")
@@ -66,15 +78,16 @@ function vec2(x, y) {
 class ball {
     constructor(pos) {
         this.pos = pos;
-        this.pos.z = 40;
+        this.pos.z = 50;
         this.velocity = vec2(0, 0);
         this.velocity.z = 8;
         this.gravity = 10;
-        this.hitbox = vec2(this.pos.x+6, this.pos.y +6 - this.pos.z)
+        this.hitbox = vec2();
         this.radius = 11;
     }
     update() {
         this.pos.x += this.velocity.x * dt;
+        this.hitbox.x = this.pos.x+6;
         this.pos.y += this.velocity.y * dt;
         this.pos.z += this.velocity.z * dt;
     
@@ -84,11 +97,15 @@ class ball {
             this.pos.z = 0;
             this.velocity.z = -this.velocity.z * 0.7; // bounce
         }
+        this.hitbox.y = this.pos.y +6 - this.pos.z;
+        //console.log(this.pos.z);
+        //console.log(this.hitbox.x);
+        //console.log(this.hitbox.y);
     }
 
     draw() {
         //SHADOW
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = 0.2;
         ctx.drawImage(ballShadow,this.pos.x-4,this.pos.y-4)
         ctx.globalAlpha = 1.0;
 
@@ -98,8 +115,6 @@ class ball {
         ctx.drawImage(ballImage, this.pos.x - 4, this.pos.y -4 - this.pos.z)
 
         // HITBOX
-        this.hitbox.x = this.pos.x+6;
-        this.hitbox.y = this.pos.y +6 - this.pos.z;
         ctx.globalAlpha = 0.5;
         ctx.beginPath();
         ctx.fillStyle="red";
@@ -115,12 +130,12 @@ class character {
         this.pos = vec2(width -width*0.5, height - height*0.2);
         this.pos.z = 0;
         this.velocity = vec2(0,0);
-        this.velocity.z = 3;
+        this.velocity.z = 0;
         this.friction = 1;
         this.speed = 40;
         this.length = 20;
         this.width = 50;
-        this.gravity = 50;
+        this.gravity = 25;
         this.animation = "Walk Forward";
         this.previousAnimation = this.animation;
         this.frameNumber = 0;
@@ -183,11 +198,15 @@ class character {
         ctx.globalAlpha = 0.2;
         this.hitbox.x = this.pos.x - this.width /2.2;
         this.hitbox.y = this.pos.y-this.pos.z - (this.length+5)
+        //console.log(this.pos.z);
+        if (this.pos.z > 0) {
+            this.hitbox.y = this.pos.y-this.pos.z - (this.length+5) - 30
+        }
         ctx.fillRect(this.hitbox.x, this.hitbox.y, this.width, this.length);
         ctx.globalAlpha = 1.0;
     }
 }
-let Ball = new ball(vec2(100, 230));
+let Ball = new ball(vec2(100, 223));
 let Character = new character();
 
 // https://www.jeffreythompson.org/collision-detection/circle-rect.php
@@ -210,62 +229,129 @@ function circleRect(cx, cy, radius, rx, ry, rw, rh) {
   
     // if the distance is less than the radius, collision!
     if (distance <= radius) {
-      return true;
+      return "t";
     }
     return false;
   }
 
 let lastTime = performance.now();
 let dt = 0;
+let ballC1Collision = false;
 function gameUpdate() {
     let now = performance.now();
     dt = (now - lastTime) / 1000; // convert ms to seconds
     lastTime = now;
+    // Collisions
+    if (ballC1Collision == "t") {
+        Ball.velocity.z = 30;
+        Ball.velocity.y = -15;
+    }
+    ballC1Collision = circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length);
+    //console.log("collision: " + circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length));
+    // Bounce off backwall
+    if (Ball.pos.y < 0) {
+        Ball.velocity.y = 30;
+    }
+    let netCussion = 5
+    console.log(`${netH - 20} > ${Ball.pos.z} | ${netY+(netH-netCussion) -5} < ${Ball.pos.y - 10} < ${netY+(netH+netCussion) -5}`)
+    ctx.beginPath();
+    ctx.rect(0,netY+(netH+netCussion) -5,3,3);
+    ctx.rect(0,netY+(netH-netCussion) -5,3,3);
+    ctx.rect(0,netY,3,3);
+    ctx.rect(0,Ball.pos.y-10,100,3);
+    ctx.rect(0,Ball.pos.y-Ball.pos.z-8,100,3);
+    ctx.stroke();
+    if (netH - 10 > Ball.pos.z && (Ball.pos.y-8 <netY+(netH+netCussion) -5 && Ball.pos.y > netY+(netH-netCussion) -5)) {
+        console.log("Collided!!!")
+        drawPixelText("Collided with net", 0,0)
+    }
     Ball.update();
     updateInput(dt);
     Character.update();
-
-    // Collisions
-    console.log(circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length))
     // TICK COUNTER
     TICK++;
 
 }
-
 function gameDraw() {
     ctx.strokeStyle="white";
     let sideLines = 0.1;
+    let diagonal = 20;
     ctx.beginPath();
     // TOP
-    ctx.moveTo(width*sideLines,height*0.1);
-    ctx.lineTo(width-(width*sideLines),height*0.1);
-    //BOTTOM
-    ctx.moveTo(width*sideLines,height - height*0.1);
-    ctx.lineTo(width-(width*sideLines), height-height*0.1);
-    //SIDE LEFT
-    ctx.moveTo(width*sideLines,height*0.1);
-    ctx.lineTo(width*sideLines, height-height*0.1);
-    //SIDE Right
-    ctx.moveTo(width-width*sideLines,height*0.1);
-    ctx.lineTo(width -width*sideLines, height-height*0.1);
-    //Front Lines
+    ctx.moveTo(width * sideLines + diagonal, height * 0.1);
+    ctx.lineTo(width - (width * sideLines) - diagonal, height * 0.1);
+
+    // BOTTOM
+    ctx.moveTo(width * sideLines, height - height * 0.1);
+    ctx.lineTo(width - (width * sideLines), height - height * 0.1);
+
+    // SIDE LEFT
+    ctx.moveTo(width * sideLines + diagonal, height * 0.1);
+    ctx.lineTo(width * sideLines, height - height * 0.1);
+
+    // SIDE RIGHT
+    ctx.moveTo(width - width * sideLines - diagonal, height * 0.1);
+    ctx.lineTo(width - width * sideLines, height - height * 0.1);
+
+    // FRONT LINES
+    const topY = height * 0.1;
+    const bottomY = height - height * 0.1;
+    const H = bottomY - topY;
+    const Wb = width - 2 * (width * sideLines);
+    const Wt = Wb - 2 * diagonal;
+    function getFrontWidth(yCanvas) {
+        const y = (bottomY - yCanvas) / H; 
+        return Wb - (Wb - Wt) * y;
+    }
+
+    function drawFrontLine(yCanvas) {
+        const lineWidth = getFrontWidth(yCanvas);
+        const x1 = (width - lineWidth) / 2;
+        const x2 = (width + lineWidth) / 2;
+        ctx.moveTo(x1, yCanvas);
+        ctx.lineTo(x2, yCanvas);
+    }
+
     let bottomFrontLine = 0.4;
-    ctx.moveTo(width*sideLines,height - height*bottomFrontLine);
-    ctx.lineTo(width-(width*sideLines), height-height*bottomFrontLine);
-    let topFrontLine = 0.6;
-    ctx.moveTo(width*sideLines,height - height*topFrontLine);
-    ctx.lineTo(width-(width*sideLines), height-height*topFrontLine);
+    let topFrontLine = 0.65;
+
+    const bottomFrontY = height - height * bottomFrontLine;
+    const topFrontY = height - height * topFrontLine;
+
+    drawFrontLine(bottomFrontY);
+    drawFrontLine(topFrontY);
+    // Draw all lines
     ctx.stroke();
 
     //NET
-    ctx.drawImage(net, halfWidth - 233/2, height*0.4);
-    Ball.draw();
+    //console.log("BallY: " + Ball.pos.y - Ball.pos.z)
+    //console.log("Net Y: " + netY);
+    if (Ball.pos.y > netY+40) {
+        ctx.drawImage(net, netX, netY);
+        Ball.draw();
+    } else {
+        //console.log("BALLS");
+        Ball.draw();
+        ctx.drawImage(net, netX, netY);
+    }
+
     Character.draw();
+    sideview.beginPath();
+    sideview.rect(
+        (Ball.pos.y/height) * sideViewWidth,
+        ((height - (Ball.pos.z)) / height) * sideViewHeight - 8, 
+        3,3);
+    
+    sideview.rect(
+        ((netY / height) * sideViewWidth)+ 20,
+        ((netH / height)* sideViewHeight +10)
+        ,3,5);
+    sideview.stroke();
 }
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    sideview.clearRect(0, 0, sideView.width, sideView.height);
     gameUpdate();
     gameDraw()
     window.requestAnimationFrame(gameLoop);    
@@ -281,6 +367,7 @@ const keys = {
     a: false,
     d: false,
     " ":false,
+    f: false,
 };
 
 window.addEventListener("keydown", (e) => {
@@ -296,6 +383,7 @@ window.addEventListener("keyup", (e) => {
 let moving;
 function updateInput(dt) {
     let speed = Character.speed * dt;
+    // Up/Down/Left/Right
     moving = keys.ArrowUp || keys.w || keys.ArrowDown || keys.s || keys.ArrowLeft || keys.a || keys.ArrowRight || keys.d;
     let addY = 0;
     let addX = 0;
@@ -325,8 +413,13 @@ function updateInput(dt) {
         Character.pos.x += addX * speed
         Character.pos.y += addY * speed
     }
+    // JUMP
     if (keys[" "]) {
         Character.pos.z += speed;
+    }
+    // Dash
+    if (keys.f) {
+        Character.pos.x += addX * speed * 2;
     }
 }
 //document.addEventListener("keydown", e => {
