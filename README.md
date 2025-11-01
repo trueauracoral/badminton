@@ -19,16 +19,25 @@
             - [X] Backward
     - [ ] Player 2
 - [X] Code Animation player
-- [ ] Ball Collision
+- [X] Ball Collision
     - [X] (10/19/25) Player
     - [X] (10/26/25) Net 
 - [X] Make ball bounce
 - [ ] Make it so that way based on the direction l/r the player goes that's where the ball goes.
-- [ ] Make a backwall to bounce off of.
+- [ ] Make an indicator when the ball has gone offscreen
+    - ASSIGNED: (10/31/25)
+- [ ] Check if ball is outside of the play area 
+    - ASSIGNED: (10/31/25)
+- [ ] SFX
+    - [ ] Ball Hit
+    - ASSIGNED: (10/31/25)
+- [ ] Draw dashed line from ball to ground
+    - ASSIGNED: (10/31/25)
+- [X] Make a backwall to bounce off of.
 - [ ] Dash
     - [ ] Yokai watch style dash (10/26/25)
 - [X] Make it so that way the hitbox adjusts when the player jumps up.
-- [X] (10/13/25)Fix diagonals
+- [X] (10/13/25) Fix diagonals
 # Devlog
 ## 9/12/25
 Setup project working on ball bounce have idea. 2d badminton like mario tennis top down. Implemented ball bouncing physics
@@ -87,3 +96,9 @@ I did this by
 - Finnessing net to ball collision
 - Made a sidebar canvas that shows from a side view perspective what's going on with the ball
     - It works decently well. Math is hard.
+## 10/28/25
+- Made an arrow in desmos
+The idea is that the way the ball travels an arrow will stem from the player
+- Q moves the arrow left
+- E moves the arrow right
+- X increases radius speed

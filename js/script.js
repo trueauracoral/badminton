@@ -121,6 +121,14 @@ class ball {
         ctx.arc(this.hitbox.x, this.hitbox.y, 11, 0, 2*Math.PI);
         ctx.fill();
         ctx.globalAlpha = 1;
+
+        // Vertical Height line
+        ctx.beginPath();
+        ctx.setLineDash([2, 2]);
+        ctx.moveTo(this.pos.x+6, this.pos.y-this.pos.z+16);
+        ctx.lineTo(this.pos.x+6, this.pos.y+6);
+        ctx.stroke();
+        ctx.setLineDash([0,0])
     }
 }
 
@@ -326,7 +334,7 @@ function gameDraw() {
     //NET
     //console.log("BallY: " + Ball.pos.y - Ball.pos.z)
     //console.log("Net Y: " + netY);
-    if (Ball.pos.y > netY+40) {
+    if (Ball.pos.y > netY+60) {
         ctx.drawImage(net, netX, netY);
         Ball.draw();
     } else {
