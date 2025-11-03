@@ -143,11 +143,14 @@ class character {
         this.speed = 40;
         this.length = 20;
         this.width = 50;
-        this.gravity = 25;
+        this.gravity = 40;
         this.animation = "Walk Forward";
         this.previousAnimation = this.animation;
         this.frameNumber = 0;
         this.hitbox = vec2();
+        this.center = vec2();
+        this.force = 20;
+        this.angle = 5;
     }
     update() {
         this.pos.z += this.velocity.z *dt;
@@ -173,7 +176,6 @@ class character {
                 this.frameNumber = 0;
             }
         }
-        
     }
     draw() {
         let filename = "player animation";
@@ -212,6 +214,13 @@ class character {
         }
         ctx.fillRect(this.hitbox.x, this.hitbox.y, this.width, this.length);
         ctx.globalAlpha = 1.0;
+        // Hit Right/Left
+        ctx.beginPath()
+        this.center.x = this.pos.x+3;
+        this.center.y = this.pos.y-10;
+        ctx.moveTo(this.center.x, this.center.y);
+        ctx.lineTo(this.center.x + (this.force * Math.cos(this.angle)), this.center.y + (this.force * Math.sin(this.angle)) );
+        ctx.stroke();
     }
 }
 let Ball = new ball(vec2(100, 223));
@@ -219,32 +228,59 @@ let Character = new character();
 
 // https://www.jeffreythompson.org/collision-detection/circle-rect.php
 function circleRect(cx, cy, radius, rx, ry, rw, rh) {
-
     // temporary variables to set edges for testing
     let testX = cx;
     let testY = cy;
-  
+
     // which edge is closest?
     if (cx < rx)         testX = rx;      // test left edge
     else if (cx > rx+rw) testX = rx+rw;   // right edge
     if (cy < ry)         testY = ry;      // top edge
     else if (cy > ry+rh) testY = ry+rh;   // bottom edge
-  
+
     // get distance from closest edges
     let distX = cx-testX;
     let distY = cy-testY;
     let distance = Math.sqrt( (distX*distX) + (distY*distY) );
-  
+
     // if the distance is less than the radius, collision!
     if (distance <= radius) {
-      return "t";
+        return "t";
     }
     return false;
-  }
+}
+// https://www.jeffreythompson.org/collision-detection/poly-point.php
+function polyPoint(vertices, px, py) {
+    let collision = false;
 
+    // go through each of the vertices, plus
+    // the next vertex in the list
+    let next = 0;
+    for (let current=0; current<vertices.length; current++) {
+
+        // get next vertex in list
+        // if we've hit the end, wrap around to 0
+        next = current+1;
+        if (next == vertices.length) next = 0;
+
+        // get the PVectors at our current position
+        // this makes our if statement a little cleaner
+        let vc = vertices[current];    // c for "current"
+        let vn = vertices[next];       // n for "next"
+
+        // compare position, flip 'collision' variable
+        // back and forth
+        if (((vc.y >= py && vn.y < py) || (vc.y < py && vn.y >= py)) &&
+            (px < (vn.x-vc.x)*(py-vc.y) / (vn.y-vc.y)+vc.x)) {
+                collision = !collision;
+        }
+    }
+    return collision;
+}
 let lastTime = performance.now();
 let dt = 0;
 let ballC1Collision = false;
+let outOfBounds = false
 function gameUpdate() {
     let now = performance.now();
     dt = (now - lastTime) / 1000; // convert ms to seconds
@@ -261,7 +297,7 @@ function gameUpdate() {
         Ball.velocity.y = 30;
     }
     let netCussion = 5
-    console.log(`${netH - 20} > ${Ball.pos.z} | ${netY+(netH-netCussion) -5} < ${Ball.pos.y - 10} < ${netY+(netH+netCussion) -5}`)
+    //console.log(`${netH - 20} > ${Ball.pos.z} | ${netY+(netH-netCussion) -5} < ${Ball.pos.y - 10} < ${netY+(netH+netCussion) -5}`)
     ctx.beginPath();
     ctx.rect(0,netY+(netH+netCussion) -5,3,3);
     ctx.rect(0,netY+(netH-netCussion) -5,3,3);
@@ -270,20 +306,34 @@ function gameUpdate() {
     ctx.rect(0,Ball.pos.y-Ball.pos.z-8,100,3);
     ctx.stroke();
     if (netH - 10 > Ball.pos.z && (Ball.pos.y-8 <netY+(netH+netCussion) -5 && Ball.pos.y > netY+(netH-netCussion) -5)) {
-        console.log("Collided!!!")
+        //console.log("Collided!!!")
         drawPixelText("Collided with net", 0,0)
     }
+    drawPixelText("Out of Bounds: " + outOfBounds, 0,30);
     Ball.update();
+
+    // Is in field?
+    if (polyPoint(vertices, Ball.pos.x-4, Ball.pos.y-4)) {
+        outOfBounds = false;
+    } else {
+        outOfBounds = true;
+    }
     updateInput(dt);
     Character.update();
     // TICK COUNTER
     TICK++;
 
 }
+// Trapezoid points
+let sideLines = 0.1;
+let diagonal = 20;
+let topLeft = { x: width * sideLines + diagonal, y: height * 0.1 };
+let topRight = { x: width - (width * sideLines) - diagonal, y: height * 0.1 };
+let bottomLeft = { x: width * sideLines, y: height - height * 0.1 };
+let bottomRight = { x: width - (width * sideLines), y: height - height * 0.1 };
+let vertices = [topLeft, topRight, bottomRight, bottomLeft];
 function gameDraw() {
     ctx.strokeStyle="white";
-    let sideLines = 0.1;
-    let diagonal = 20;
     ctx.beginPath();
     // TOP
     ctx.moveTo(width * sideLines + diagonal, height * 0.1);
@@ -328,6 +378,11 @@ function gameDraw() {
 
     drawFrontLine(bottomFrontY);
     drawFrontLine(topFrontY);
+
+    ctx.rect(topLeft.x, topLeft.y, 3,3)
+    ctx.rect(topRight.x, topRight.y, 3,3)
+    ctx.rect(bottomLeft.x, bottomLeft.y, 3,3)
+    ctx.rect(bottomRight.x,bottomRight.y,3,3)
     // Draw all lines
     ctx.stroke();
 
@@ -376,6 +431,8 @@ const keys = {
     d: false,
     " ":false,
     f: false,
+    q: false,
+    e: false,
 };
 
 window.addEventListener("keydown", (e) => {
@@ -391,6 +448,7 @@ window.addEventListener("keyup", (e) => {
 let moving;
 function updateInput(dt) {
     let speed = Character.speed * dt;
+    let shootSpeed = 40*dt;
     // Up/Down/Left/Right
     moving = keys.ArrowUp || keys.w || keys.ArrowDown || keys.s || keys.ArrowLeft || keys.a || keys.ArrowRight || keys.d;
     let addY = 0;
@@ -428,6 +486,13 @@ function updateInput(dt) {
     // Dash
     if (keys.f) {
         Character.pos.x += addX * speed * 2;
+    }
+    // Shoot Left/Right
+    if (keys.q) {
+        Character.angle -= shootSpeed * dt;
+    }
+    if (keys.e) {
+        Character.angle += shootSpeed * dt;
     }
 }
 //document.addEventListener("keydown", e => {

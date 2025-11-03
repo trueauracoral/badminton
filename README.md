@@ -26,13 +26,17 @@
 - [ ] Make it so that way based on the direction l/r the player goes that's where the ball goes.
 - [ ] Make an indicator when the ball has gone offscreen
     - ASSIGNED: (10/31/25)
-- [ ] Check if ball is outside of the play area 
+- [X] Check if ball is outside of the play area 
     - ASSIGNED: (10/31/25)
+    - COMPLETED: (11/01/25)
 - [ ] SFX
     - [ ] Ball Hit
     - ASSIGNED: (10/31/25)
-- [ ] Draw dashed line from ball to ground
+- [X] Draw dashed line from ball to ground
     - ASSIGNED: (10/31/25)
+    - COMPLETED: (10/31/25)
+- [ ] Make the side view prettier
+    - ASSIGNED: (11/01/25)
 - [X] Make a backwall to bounce off of.
 - [ ] Dash
     - [ ] Yokai watch style dash (10/26/25)
@@ -102,3 +106,7 @@ The idea is that the way the ball travels an arrow will stem from the player
 - Q moves the arrow left
 - E moves the arrow right
 - X increases radius speed
+## 11/1/25
+Implemented if in bounds of the trapezoidal field
+## 11/2/25
+Begane work on the shooting by adding a line that can be controlled with q and e for angle
