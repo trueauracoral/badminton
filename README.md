@@ -19,29 +19,34 @@
             - [X] Backward
     - [ ] Player 2
 - [X] Code Animation player
+- [X] Make it so that way the hitbox adjusts when the player jumps up.
+- [X] (10/13/25) Fix diagonals
+- [X] Make a backwall to bounce off of.
 - [X] Ball Collision
     - [X] (10/19/25) Player
+    - [ ] I need to fix it so that way it checks if they are on the same y position
+        - ASSIGNED: (10/31/25)
     - [X] (10/26/25) Net 
 - [X] Make ball bounce
-- [ ] Make it so that way based on the direction l/r the player goes that's where the ball goes.
-- [ ] Make an indicator when the ball has gone offscreen
-    - ASSIGNED: (10/31/25)
 - [X] Check if ball is outside of the play area 
     - ASSIGNED: (10/31/25)
     - COMPLETED: (11/01/25)
-- [ ] SFX
-    - [ ] Ball Hit
-    - ASSIGNED: (10/31/25)
 - [X] Draw dashed line from ball to ground
     - ASSIGNED: (10/31/25)
     - COMPLETED: (10/31/25)
+- [ ] Make it so that way based on the direction l/r the player goes that's where the ball goes.
+    - [X] Make it so it doesn't go past a left most bounds and a right most bounds
+    - Make it so you can make it grow in size perhaps change collors as a power indicator
+    - Only make it appear when the ball is near the player
+- [ ] Make an indicator when the ball has gone offscreen
+    - ASSIGNED: (10/31/25)
+- [ ] SFX
+    - [ ] Ball Hit
+    - ASSIGNED: (10/31/25)
 - [ ] Make the side view prettier
     - ASSIGNED: (11/01/25)
-- [X] Make a backwall to bounce off of.
 - [ ] Dash
     - [ ] Yokai watch style dash (10/26/25)
-- [X] Make it so that way the hitbox adjusts when the player jumps up.
-- [X] (10/13/25) Fix diagonals
 # Devlog
 ## 9/12/25
 Setup project working on ball bounce have idea. 2d badminton like mario tennis top down. Implemented ball bouncing physics
@@ -110,3 +115,19 @@ The idea is that the way the ball travels an arrow will stem from the player
 Implemented if in bounds of the trapezoidal field
 ## 11/2/25
 Begane work on the shooting by adding a line that can be controlled with q and e for angle
+## 11/3/25
+Worked on outline
+## 11/5/25
+Drew whole arrow and it has an outline.
+I think that i need to delete jump
+it's not a part of mvp perhaps make thins to easy. I think not having jump adds more flavor perhaps.
+## 11/8/25
+Made it so actually x and c so the thumb controlls wheter the ball goes left or right
+## 11/12/25
+Begane work on implementing second player. He is drawn to the screen
+fixed animation error where it would animate the second player if I started moving.
+Decided to make the second character gray as an alternative to orange. Blue looks weird.
+## 11/13/25
+Began work on the arrow for the second player. Fixed directionality.
+## 11/14/25
+Began work on the enemy AI and animating him.

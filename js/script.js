@@ -67,6 +67,7 @@ let ballImage = loadImage('./assets/ball.png');
 // Ball
 let ballShadow = loadImage('./assets/ball-shadow.png')
 let playerSprite = loadImage("./assets/player animation.png");
+let opponentSprite = loadImage("./assets/opponent animation.png");
 let playerShadow = loadImage("./assets/player shadow.png")
 
 let TICK = 0;
@@ -81,9 +82,10 @@ class ball {
         this.pos.z = 50;
         this.velocity = vec2(0, 0);
         this.velocity.z = 8;
-        this.gravity = 10;
+        this.gravity = 15;
         this.hitbox = vec2();
         this.radius = 11;
+        this.groundCenter = vec2();
     }
     update() {
         this.pos.x += this.velocity.x * dt;
@@ -105,8 +107,10 @@ class ball {
 
     draw() {
         //SHADOW
-        ctx.globalAlpha = 0.2;
-        ctx.drawImage(ballShadow,this.pos.x-4,this.pos.y-4)
+        ctx.globalAlpha = 0.5;
+        this.groundCenter.x = this.pos.x-4
+        this.groundCenter.y = this.pos.y-4;
+        ctx.drawImage(ballShadow,this.groundCenter.x,this.groundCenter.y)
         ctx.globalAlpha = 1.0;
 
         // IMAGE
@@ -144,13 +148,24 @@ class character {
         this.length = 20;
         this.width = 50;
         this.gravity = 40;
+        // Animation
         this.animation = "Walk Forward";
         this.previousAnimation = this.animation;
+        this.sprite = playerSprite;
+        this.moving = false;
         this.frameNumber = 0;
+        // collision
         this.hitbox = vec2();
-        this.center = vec2();
+        this.center = vec2(3,-10);
+        // hiting left/right
         this.force = 20;
-        this.angle = 5;
+        this.forceAngle = 10;
+        this.angle = -(Math.PI)/2;
+        this.neutral = this.angle;
+        this.newPointX;
+        this.newPointY;
+        this.actualCenterX;
+        this.actualCenterY;
     }
     update() {
         this.pos.z += this.velocity.z *dt;
@@ -166,7 +181,7 @@ class character {
             }
         } else {
             this.animation = this.animation.replace("Hit ", "");
-            if (moving) {
+            if (this.moving) {
                 this.previousAnimation = this.animation;
                 if (!this.animation.includes("Walk")) {
                     this.animation = `Walk ${this.animation}`;
@@ -184,7 +199,7 @@ class character {
             if (animations[i].name == this.animation) {
                 let animationKey = `${filename} ${animations[i].from+this.frameNumber}.aseprite`;
                 let frame = animationData.frames[animationKey].frame;
-                ctx.drawImage(playerSprite,
+                ctx.drawImage(this.sprite,
                     frame.x, frame.y,
                     frame.w, frame.h,
                     Math.round(this.pos.x -frame.w*0.43), Math.round(this.pos.y-frame.h*0.8- this.pos.z),
@@ -216,15 +231,44 @@ class character {
         ctx.globalAlpha = 1.0;
         // Hit Right/Left
         ctx.beginPath()
-        this.center.x = this.pos.x+3;
-        this.center.y = this.pos.y-10;
-        ctx.moveTo(this.center.x, this.center.y);
-        ctx.lineTo(this.center.x + (this.force * Math.cos(this.angle)), this.center.y + (this.force * Math.sin(this.angle)) );
+        ctx.lineWidth = 1
+        this.actualCenterX = this.pos.x + this.center.x;
+        this.actualCenterY = this.pos.y + this.center.y;
+        ctx.moveTo(this.actualCenterX, this.actualCenterY);
+        this.newPointX = this.actualCenterX + (this.force * Math.cos(this.angle));
+        this.newPointY = this.actualCenterY + (this.force * Math.sin(this.angle));
+        let angleArrow = 8.95;
+        ctx.lineTo(this.newPointX, this.newPointY);
+        ctx.moveTo(this.newPointX, this.newPointY);
+        ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle+angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle+angleArrow)));
+        ctx.moveTo(this.newPointX, this.newPointY);
+        ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle-angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle-angleArrow)));
+        //console.log(this.neutral);
+        //console.log(this.angle);
+        if (this.angle < this.neutral) {
+            this.angle += 1*dt;
+        } else if (this.angle > this.neutral) {
+            this.angle -= 1*dt;
+        }
+        //console.log(this.newPointX - this.center.x)
+        //// draw
+        ctx.lineWidth = 4;
+        //https://stackoverflow.com/a/20874475/24903843
+        ctx.strokeStyle="black";
+        ctx.stroke();
+        ctx.strokeStyle="white"
+        ctx.lineWidth = 1;
         ctx.stroke();
     }
 }
 let Ball = new ball(vec2(100, 223));
 let Character = new character();
+let opponent = new character();
+opponent.pos.y -= 140;
+opponent.sprite = opponentSprite;
+opponent.angle = Math.PI/2;
+opponent.neutral = opponent.angle;
+opponent.center.y -= 20;
 
 // https://www.jeffreythompson.org/collision-detection/circle-rect.php
 function circleRect(cx, cy, radius, rx, ry, rw, rh) {
@@ -285,16 +329,18 @@ function gameUpdate() {
     let now = performance.now();
     dt = (now - lastTime) / 1000; // convert ms to seconds
     lastTime = now;
-    // Collisions
+    // Collisions - hit ball
     if (ballC1Collision == "t") {
-        Ball.velocity.z = 30;
-        Ball.velocity.y = -15;
+        Ball.velocity.z = 45;
+        Ball.velocity.y = -20;
+        Ball.velocity.x = Character.newPointX - Character.actualCenterX;
     }
     ballC1Collision = circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length);
     //console.log("collision: " + circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length));
     // Bounce off backwall
-    if (Ball.pos.y < 0) {
+    if (Ball.pos.y < 10) {
         Ball.velocity.y = 30;
+        Ball.velocity.x *= -1;
     }
     let netCussion = 5
     //console.log(`${netH - 20} > ${Ball.pos.z} | ${netY+(netH-netCussion) -5} < ${Ball.pos.y - 10} < ${netY+(netH+netCussion) -5}`)
@@ -318,8 +364,10 @@ function gameUpdate() {
     } else {
         outOfBounds = true;
     }
+    AImovement(dt);
     updateInput(dt);
     Character.update();
+    opponent.update();
     // TICK COUNTER
     TICK++;
 
@@ -386,6 +434,7 @@ function gameDraw() {
     // Draw all lines
     ctx.stroke();
 
+    opponent.draw();
     //NET
     //console.log("BallY: " + Ball.pos.y - Ball.pos.z)
     //console.log("Net Y: " + netY);
@@ -433,6 +482,8 @@ const keys = {
     f: false,
     q: false,
     e: false,
+    x: false,
+    c: false,
 };
 
 window.addEventListener("keydown", (e) => {
@@ -445,12 +496,47 @@ window.addEventListener("keyup", (e) => {
         keys[e.key] = false;
     }
 });
-let moving;
+
+function AImovement(dt) {
+    let speed = opponent.speed * dt;
+
+    let targetX = Ball.pos.x+6;
+    let targetY = Ball.pos.y+6;
+
+    let dx = targetX - opponent.pos.x;
+    let dy = targetY - opponent.pos.y;
+    ctx.beginPath();
+    ctx.moveTo(opponent.pos.x, opponent.pos.y);
+    ctx.lineTo(targetX, targetY)
+    ctx.stroke()
+
+    let distance = Math.hypot(dx, dy);
+    console.log(`DX: ${dx}\nDY: ${dy}`)
+    if (Math.abs(dx) > Math.abs(dy)) {
+        opponent.pos.x += (dx / distance) * speed;
+        if (opponent.pos.x > targetX) {
+            opponent.animation = "Left";
+        } else {
+            opponent.animation = "Right";
+        }
+        opponent.moving = true;
+    } else if (Math.abs(dy) > Math.abs(dx)) {
+        let newValue = (dy / distance) * speed;
+        if (opponent.pos.y + newValue < netY+netH-20) {
+            opponent.pos.y += (dy / distance) * speed;
+        }
+        opponent.animation = "Forward";
+    } else {
+        opponent.moving = false;
+    }
+}
+
 function updateInput(dt) {
     let speed = Character.speed * dt;
-    let shootSpeed = 40*dt;
+    let shootSpeed = 100*dt;
+    let shotRange = Math.PI / 4;
     // Up/Down/Left/Right
-    moving = keys.ArrowUp || keys.w || keys.ArrowDown || keys.s || keys.ArrowLeft || keys.a || keys.ArrowRight || keys.d;
+    Character.moving = keys.ArrowUp || keys.w || keys.ArrowDown || keys.s || keys.ArrowLeft || keys.a || keys.ArrowRight || keys.d;
     let addY = 0;
     let addX = 0;
     if (keys.ArrowUp || keys.w) {
@@ -488,11 +574,17 @@ function updateInput(dt) {
         Character.pos.x += addX * speed * 2;
     }
     // Shoot Left/Right
-    if (keys.q) {
-        Character.angle -= shootSpeed * dt;
+    //console.log("MAX: " + -1*shotRange);
+    //console.log("NEW: " + Character.angle + shootSpeed * dt)
+    if (keys.x) {
+        if (Character.angle - shootSpeed * dt > -1*(Math.PI*3)/4) {
+            Character.angle -= shootSpeed * dt;
+        }
     }
-    if (keys.e) {
-        Character.angle += shootSpeed * dt;
+    if (keys.c) {
+        if (Character.angle + shootSpeed * dt < -1 *(Math.PI)/4) {
+            Character.angle += shootSpeed * dt;
+        }
     }
 }
 //document.addEventListener("keydown", e => {
