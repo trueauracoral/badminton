@@ -18,13 +18,17 @@
             - [X] Forward
             - [X] Backward
     - [ ] Player 2
+        - [ ] Need to make it so that way he doesn't go past the trapezoidal permiter
+            - A: 11/14/25
+        - [ ] Need to make it so that way he shoots the ball where the player isn't located but also not outside the trapezoid
+            - A: 11/15/25
 - [X] Code Animation player
 - [X] Make it so that way the hitbox adjusts when the player jumps up.
 - [X] (10/13/25) Fix diagonals
 - [X] Make a backwall to bounce off of.
 - [X] Ball Collision
     - [X] (10/19/25) Player
-    - [ ] I need to fix it so that way it checks if they are on the same y position
+    - [X] (11/15/25) I need to fix it so that way it checks if they are on the same y position
         - ASSIGNED: (10/31/25)
     - [X] (10/26/25) Net 
 - [X] Make ball bounce
@@ -34,17 +38,21 @@
 - [X] Draw dashed line from ball to ground
     - ASSIGNED: (10/31/25)
     - COMPLETED: (10/31/25)
+- [ ] Menu 
+    - Be able to choose 1P/2P
+    - A: (11/16/25)
 - [ ] Make it so that way based on the direction l/r the player goes that's where the ball goes.
     - [X] Make it so it doesn't go past a left most bounds and a right most bounds
-    - Make it so you can make it grow in size perhaps change collors as a power indicator
-    - Only make it appear when the ball is near the player
+    - [ ] Make it so you can make it grow in size 
+        - [ ] perhaps change collors as a power indicator
+    - [ ] Only make it appear when the ball is near the player
 - [ ] Make an indicator when the ball has gone offscreen
-    - ASSIGNED: (10/31/25)
-- [ ] SFX
-    - [ ] Ball Hit
     - ASSIGNED: (10/31/25)
 - [ ] Make the side view prettier
     - ASSIGNED: (11/01/25)
+- [ ] SFX
+    - [ ] Ball Hit
+    - ASSIGNED: (10/31/25)
 - [ ] Dash
     - [ ] Yokai watch style dash (10/26/25)
 # Devlog
@@ -131,3 +139,7 @@ Decided to make the second character gray as an alternative to orange. Blue look
 Began work on the arrow for the second player. Fixed directionality.
 ## 11/14/25
 Began work on the enemy AI and animating him.
+## 11/15/25
+Heavy progress on the AI made it fully functional and fixed bugs. Still not perfect
+## 11/16/25
+Made it so that way on shift the arrow would grow in intensity

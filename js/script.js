@@ -1,6 +1,6 @@
 import animationData from "../assets/player animation.json" with { type: "json" };
 
-console.log(animationData);
+//console.log(animationData);
 
 // ./assets/player animation.json
 function loadImage(src) {
@@ -119,12 +119,12 @@ class ball {
         ctx.drawImage(ballImage, this.pos.x - 4, this.pos.y -4 - this.pos.z)
 
         // HITBOX
-        ctx.globalAlpha = 0.5;
-        ctx.beginPath();
-        ctx.fillStyle="red";
-        ctx.arc(this.hitbox.x, this.hitbox.y, 11, 0, 2*Math.PI);
-        ctx.fill();
-        ctx.globalAlpha = 1;
+        //ctx.globalAlpha = 0.5;
+        //ctx.beginPath();
+        //ctx.fillStyle="red";
+        //ctx.arc(this.hitbox.x, this.hitbox.y, 11, 0, 2*Math.PI);
+        //ctx.fill();
+        //ctx.globalAlpha = 1;
 
         // Vertical Height line
         ctx.beginPath();
@@ -166,6 +166,8 @@ class character {
         this.newPointY;
         this.actualCenterX;
         this.actualCenterY;
+        this.colorG = 255;
+        this.colorB = 255;
     }
     update() {
         this.pos.z += this.velocity.z *dt;
@@ -219,17 +221,32 @@ class character {
         ctx.globalAlpha = 1.0;
         // HITBOX
         // TODO: 10/17/25 The hitbox is not centered well.
-        ctx.fillStyle = "red";
-        ctx.globalAlpha = 0.2;
+        //ctx.fillStyle = "red";
+        //ctx.globalAlpha = 0.2;
         this.hitbox.x = this.pos.x - this.width /2.2;
         this.hitbox.y = this.pos.y-this.pos.z - (this.length+5)
         //console.log(this.pos.z);
         if (this.pos.z > 0) {
             this.hitbox.y = this.pos.y-this.pos.z - (this.length+5) - 30
         }
-        ctx.fillRect(this.hitbox.x, this.hitbox.y, this.width, this.length);
-        ctx.globalAlpha = 1.0;
+        //ctx.fillRect(this.hitbox.x, this.hitbox.y, this.width, this.length);
+        //ctx.globalAlpha = 1.0;
+
         // Hit Right/Left
+        if (this.angle < this.neutral) {
+            this.angle += 1*dt;
+        } else if (this.angle > this.neutral) {
+            this.angle -= 1*dt;
+        }
+        console.log(this.force);
+        if (this.force > 20) {
+            this.force -= 10*dt;
+            if (this.colorG < 255 && this.colorB < 255) {
+                this.colorG += 60*dt;
+                this.colorB += 60*dt;
+            }
+            console.log(`COLORS: ${this.colorG} ${this.colorB}`);
+        }
         ctx.beginPath()
         ctx.lineWidth = 1
         this.actualCenterX = this.pos.x + this.center.x;
@@ -245,18 +262,13 @@ class character {
         ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle-angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle-angleArrow)));
         //console.log(this.neutral);
         //console.log(this.angle);
-        if (this.angle < this.neutral) {
-            this.angle += 1*dt;
-        } else if (this.angle > this.neutral) {
-            this.angle -= 1*dt;
-        }
         //console.log(this.newPointX - this.center.x)
         //// draw
         ctx.lineWidth = 4;
         //https://stackoverflow.com/a/20874475/24903843
         ctx.strokeStyle="black";
         ctx.stroke();
-        ctx.strokeStyle="white"
+        ctx.strokeStyle=`rgb(255 ${this.colorG} ${this.colorB})`;
         ctx.lineWidth = 1;
         ctx.stroke();
     }
@@ -321,21 +333,86 @@ function polyPoint(vertices, px, py) {
     }
     return collision;
 }
+
+function AImovement(dt) {
+    let speed = (opponent.speed) * dt;
+
+    let targetX = Ball.pos.x+6;
+    let targetY = Ball.pos.y+6;
+
+    let dx = targetX - opponent.pos.x-8;
+    let dy = targetY - opponent.pos.y-10;
+    //ctx.beginPath();
+    //ctx.moveTo(opponent.pos.x, opponent.pos.y);
+    //ctx.lineTo(targetX, targetY)
+    //ctx.stroke()
+
+    let distance = Math.hypot(dx, dy);
+    //console.log(`DX: ${dx}\nDY: ${dy}`);
+    
+    if (distance > 10) {
+        if ((Math.abs(Math.floor(Math.abs(dx)) - Math.floor(Math.abs(dy)))) < 1) {
+            // 11/14/25 It's like he can't catch up with the ball for some reason
+            opponent.pos.x += (dx / distance) * (speed/dt+20)*dt;
+            opponent.pos.y += (dy / distance) * (speed/dt+20)*dt;
+        } else if (Math.abs(dx) > Math.abs(dy)) {
+            //console.log("HORIZONTAL")
+            opponent.pos.x += (dx / distance) * speed;
+            if (opponent.pos.x > targetX) {
+                opponent.animation = "Left";
+            } else {
+                opponent.animation = "Right";
+            }
+            opponent.moving = true;
+        } else if (Math.abs(dy) > Math.abs(dx)) {
+            let newValue = (dy / distance) * speed;
+            //console.log(`${opponent.pos.y + newValue} < ${netY+netH-20}`)
+            // NO clue why this prevents clipping through the net.
+            if (Math.floor(opponent.pos.y + newValue) < netY+netH-20) {
+                //console.log("VERTICAL 2")
+                opponent.pos.y += (dy / distance) * speed;
+                if (opponent.pos.y > targetY) {
+                    opponent.animation = "Backward";
+                } else {
+                    opponent.animation = "Forward";
+                }
+                opponent.moving = true;
+            } else {
+                //console.log("HI");
+                opponent.pos.y -= 0.5;
+            }
+        } else {
+            opponent.animation = "Forward";
+            opponent.moving = false;
+        }
+    }
+    if (opponent.pos.y > netY + netH-20) {
+        opponent.pos.y - netY+netH-20;
+    }
+}
+
 let lastTime = performance.now();
 let dt = 0;
 let ballC1Collision = false;
+let ballC2Collision = false;
 let outOfBounds = false
 function gameUpdate() {
     let now = performance.now();
     dt = (now - lastTime) / 1000; // convert ms to seconds
     lastTime = now;
     // Collisions - hit ball
-    if (ballC1Collision == "t") {
+    if (ballC1Collision == "t" && (Character.pos.y < Ball.pos.y + 5 && Character.pos.y > Ball.pos.y - 5)) {
         Ball.velocity.z = 45;
         Ball.velocity.y = -20;
         Ball.velocity.x = Character.newPointX - Character.actualCenterX;
     }
+    if (ballC2Collision == "t" && (opponent.pos.y < Ball.pos.y + 10 && opponent.pos.y > Ball.pos.y - 10)) {
+        Ball.velocity.z = 45;
+        Ball.velocity.y = 20;
+        Ball.velocity.x = Character.newPointX - Character.actualCenterX;
+    }
     ballC1Collision = circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length);
+    ballC2Collision = circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, opponent.hitbox.x, opponent.hitbox.y, opponent.width, opponent.length)
     //console.log("collision: " + circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length));
     // Bounce off backwall
     if (Ball.pos.y < 10) {
@@ -344,18 +421,18 @@ function gameUpdate() {
     }
     let netCussion = 5
     //console.log(`${netH - 20} > ${Ball.pos.z} | ${netY+(netH-netCussion) -5} < ${Ball.pos.y - 10} < ${netY+(netH+netCussion) -5}`)
-    ctx.beginPath();
-    ctx.rect(0,netY+(netH+netCussion) -5,3,3);
-    ctx.rect(0,netY+(netH-netCussion) -5,3,3);
-    ctx.rect(0,netY,3,3);
-    ctx.rect(0,Ball.pos.y-10,100,3);
-    ctx.rect(0,Ball.pos.y-Ball.pos.z-8,100,3);
-    ctx.stroke();
+    //ctx.beginPath();
+    //ctx.rect(0,netY+(netH+netCussion) -5,3,3);
+    //ctx.rect(0,netY+(netH-netCussion) -5,3,3);
+    //ctx.rect(0,netY,3,3);
+    //ctx.rect(0,Ball.pos.y-10,100,3);
+    //ctx.rect(0,Ball.pos.y-Ball.pos.z-8,100,3);
+    //ctx.stroke();
     if (netH - 10 > Ball.pos.z && (Ball.pos.y-8 <netY+(netH+netCussion) -5 && Ball.pos.y > netY+(netH-netCussion) -5)) {
         //console.log("Collided!!!")
         drawPixelText("Collided with net", 0,0)
     }
-    drawPixelText("Out of Bounds: " + outOfBounds, 0,30);
+    //drawPixelText("Out of Bounds: " + outOfBounds, 0,30);
     Ball.update();
 
     // Is in field?
@@ -474,85 +551,54 @@ const keys = {
     ArrowDown: false,
     ArrowLeft: false,
     ArrowRight: false,
-    w: false,
-    s: false,
-    a: false,
-    d: false,
     " ":false,
-    f: false,
-    q: false,
-    e: false,
-    x: false,
-    c: false,
+    ShiftLeft: false,
+    ShiftRight: false,
+    KeyA: false,
+    KeyC: false,
+    KeyD: false,
+    KeyE: false,
+    KeyF: false,
+    KeyW: false,
+    KeyS: false,
+    KeyQ: false,
+    KeyX: false,
+    KeyZ: false,
 };
 
 window.addEventListener("keydown", (e) => {
-    if (keys.hasOwnProperty(e.key)) {
-        keys[e.key] = true;
+    if (keys.hasOwnProperty(e.code)) {
+        keys[e.code] = true;
     }
 });
 window.addEventListener("keyup", (e) => {
-    if (keys.hasOwnProperty(e.key)) {
-        keys[e.key] = false;
+    if (keys.hasOwnProperty(e.code)) {
+        keys[e.code] = false;
     }
 });
-
-function AImovement(dt) {
-    let speed = opponent.speed * dt;
-
-    let targetX = Ball.pos.x+6;
-    let targetY = Ball.pos.y+6;
-
-    let dx = targetX - opponent.pos.x;
-    let dy = targetY - opponent.pos.y;
-    ctx.beginPath();
-    ctx.moveTo(opponent.pos.x, opponent.pos.y);
-    ctx.lineTo(targetX, targetY)
-    ctx.stroke()
-
-    let distance = Math.hypot(dx, dy);
-    console.log(`DX: ${dx}\nDY: ${dy}`)
-    if (Math.abs(dx) > Math.abs(dy)) {
-        opponent.pos.x += (dx / distance) * speed;
-        if (opponent.pos.x > targetX) {
-            opponent.animation = "Left";
-        } else {
-            opponent.animation = "Right";
-        }
-        opponent.moving = true;
-    } else if (Math.abs(dy) > Math.abs(dx)) {
-        let newValue = (dy / distance) * speed;
-        if (opponent.pos.y + newValue < netY+netH-20) {
-            opponent.pos.y += (dy / distance) * speed;
-        }
-        opponent.animation = "Forward";
-    } else {
-        opponent.moving = false;
-    }
-}
 
 function updateInput(dt) {
     let speed = Character.speed * dt;
     let shootSpeed = 100*dt;
     let shotRange = Math.PI / 4;
     // Up/Down/Left/Right
-    Character.moving = keys.ArrowUp || keys.w || keys.ArrowDown || keys.s || keys.ArrowLeft || keys.a || keys.ArrowRight || keys.d;
+    Character.moving = keys.ArrowUp || keys.KeyW || keys.ArrowDown || keys.KeyS || keys.ArrowLeft || keys.KeyA || keys.ArrowRight || keys.KeyD;
     let addY = 0;
     let addX = 0;
-    if (keys.ArrowUp || keys.w) {
+    if (keys.ArrowUp || keys.KeyW) {
         addY -= 1;
         Character.animation ="Backward"
     }
-    if (keys.ArrowDown || keys.s) {
+    if (keys.ArrowDown || keys.KeyS) {
         addY += 1;
         Character.animation ="Forward"
     }
     
-    if (keys.ArrowLeft || keys.a) {
+    if (keys.ArrowLeft || keys.KeyA) {
         addX -= 1;
         Character.animation ="Left"
     }
-    if (keys.ArrowRight || keys.d) {
+    if (keys.ArrowRight || keys.KeyD) {
         addX += 1;
         Character.animation ="Right"
     }
@@ -576,17 +622,29 @@ function updateInput(dt) {
     // Shoot Left/Right
     //console.log("MAX: " + -1*shotRange);
     //console.log("NEW: " + Character.angle + shootSpeed * dt)
-    if (keys.x) {
+    if (keys.KeyX) {
         if (Character.angle - shootSpeed * dt > -1*(Math.PI*3)/4) {
             Character.angle -= shootSpeed * dt;
         }
     }
-    if (keys.c) {
+    if (keys.KeyC) {
         if (Character.angle + shootSpeed * dt < -1 *(Math.PI)/4) {
             Character.angle += shootSpeed * dt;
         }
     }
+    if (keys.ShiftLeft) {
+        console.log("hello");
+        if (Character.force < 40) {
+            Character.force += ((speed/dt)-10)*dt;
+            if (Character.colorG > 0 && Character.colorB > 0) {
+                Character.colorG -= 200*dt;
+                Character.colorB -= 200*dt;
+            }
+        }
+        console.log(Character.force);
+    }
 }
+let lengthIndex = 0;
 //document.addEventListener("keydown", e => {
 //    if (e.key === "ArrowUp") { // spacebar hit
 //        Ball.velocity.z = 15;             // go upward
