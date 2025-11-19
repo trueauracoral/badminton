@@ -145,8 +145,8 @@ class character {
         this.velocity.z = 0;
         this.friction = 1;
         this.speed = 40;
-        this.length = 20;
-        this.width = 50;
+        this.length = 8;
+        this.width = 40;
         this.gravity = 40;
         // Animation
         this.animation = "Walk Forward";
@@ -218,19 +218,19 @@ class character {
         // SHADOW
         ctx.globalAlpha = 0.2;
         ctx.drawImage(playerShadow, this.pos.x-this.imageWidth/3.5, this.pos.y+2)
-        ctx.globalAlpha = 1.0;
         // HITBOX
-        // TODO: 10/17/25 The hitbox is not centered well.
-        //ctx.fillStyle = "red";
-        //ctx.globalAlpha = 0.2;
         this.hitbox.x = this.pos.x - this.width /2.2;
-        this.hitbox.y = this.pos.y-this.pos.z - (this.length+5)
+        this.hitbox.y = this.pos.y-this.pos.z - (this.length+25)
         //console.log(this.pos.z);
         if (this.pos.z > 0) {
             this.hitbox.y = this.pos.y-this.pos.z - (this.length+5) - 30
         }
-        //ctx.fillRect(this.hitbox.x, this.hitbox.y, this.width, this.length);
-        //ctx.globalAlpha = 1.0;
+        // TODO: 10/17/25 The hitbox is not centered well.
+        ctx.globalAlpha = 1.0;
+        ctx.fillStyle = "red";
+        ctx.globalAlpha = 0.2;
+        ctx.fillRect(this.hitbox.x, this.hitbox.y, this.width, this.length);
+        ctx.globalAlpha = 1.0;
 
         // Hit Right/Left
         if (this.angle < this.neutral) {
@@ -504,10 +504,10 @@ function gameDraw() {
     drawFrontLine(bottomFrontY);
     drawFrontLine(topFrontY);
 
-    ctx.rect(topLeft.x, topLeft.y, 3,3)
-    ctx.rect(topRight.x, topRight.y, 3,3)
-    ctx.rect(bottomLeft.x, bottomLeft.y, 3,3)
-    ctx.rect(bottomRight.x,bottomRight.y,3,3)
+    //ctx.rect(topLeft.x, topLeft.y, 3,3)
+    //ctx.rect(topRight.x, topRight.y, 3,3)
+    //ctx.rect(bottomLeft.x, bottomLeft.y, 3,3)
+    //ctx.rect(bottomRight.x,bottomRight.y,3,3)
     // Draw all lines
     ctx.stroke();
 
@@ -579,7 +579,7 @@ window.addEventListener("keyup", (e) => {
 
 function updateInput(dt) {
     let speed = Character.speed * dt;
-    let shootSpeed = 100*dt;
+    let shootSpeed = 2*dt;
     let shotRange = Math.PI / 4;
     // Up/Down/Left/Right
     Character.moving = keys.ArrowUp || keys.KeyW || keys.ArrowDown || keys.KeyS || keys.ArrowLeft || keys.KeyA || keys.ArrowRight || keys.KeyD;
@@ -623,13 +623,13 @@ function updateInput(dt) {
     //console.log("MAX: " + -1*shotRange);
     //console.log("NEW: " + Character.angle + shootSpeed * dt)
     if (keys.KeyX) {
-        if (Character.angle - shootSpeed * dt > -1*(Math.PI*3)/4) {
-            Character.angle -= shootSpeed * dt;
+        if (Character.angle - shootSpeed > -1*(Math.PI*3)/4) {
+            Character.angle -= shootSpeed;
         }
     }
     if (keys.KeyC) {
-        if (Character.angle + shootSpeed * dt < -1 *(Math.PI)/4) {
-            Character.angle += shootSpeed * dt;
+        if (Character.angle + shootSpeed < -1 *(Math.PI)/4) {
+            Character.angle += shootSpeed;
         }
     }
     if (keys.ShiftLeft) {
