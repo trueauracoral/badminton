@@ -20,7 +20,8 @@
     - [X] Player 2
 ## Code
 - [ ] Organize the code into seperate files.
-- [ ] Make it use the player jump sprite when hitting the ball.
+- [X] Make it use the player jump sprite when hitting the ball.
+    - D: 11/20/25
 - [ ] Need to make it so that way he doesn't go past the trapezoidal permiter
     - A: 11/14/25
 - [ ] Need to make it so that way he shoots the ball where the player isn't located but also not outside the trapezoid
@@ -37,6 +38,9 @@
     - ASSIGNED: (10/31/25)
 - [ ] Make the side view prettier
     - ASSIGNED: (11/01/25)
+- [X] Make it so that way you can't run and continue hitting the ball. 
+    - ASSIGNED: (11/18/25)
+    - COMPLETED: (11/20/25)
 ### Polish
 - [ ] Make the ball grow darker as it's away from the ground lighter as it gets closer.
     - Assigned: (11/18/25)
@@ -163,3 +167,11 @@ Made it the hitbox smaller.
 Cleaned up todo list
 Changed the name on the browser
 fix shootspeed
+## 11/20/25
+Made a debug button. For now all it does is that it toggles the visual hitbox on the player.
+
+I think my game is a buggy long coded inneficient mess. So the sooner I finish the better.
+dividing intos seperate files I must do even if tedious because it's a good learning experience.
+
+Also made it so that way you can't run into the ball and keep hitting it. You can only hit it once. Debug tool comes in handy
+It uses the jump sprite when hitting the ball as well.

@@ -70,7 +70,9 @@ let playerSprite = loadImage("./assets/player animation.png");
 let opponentSprite = loadImage("./assets/opponent animation.png");
 let playerShadow = loadImage("./assets/player shadow.png")
 
+// Globals
 let TICK = 0;
+let DEBUG = false;
 
 function vec2(x, y) {
     return {x: x, y: y};
@@ -145,8 +147,9 @@ class character {
         this.velocity.z = 0;
         this.friction = 1;
         this.speed = 40;
-        this.length = 8;
+        this.length = 15;
         this.width = 40;
+        this.uphit = 20;
         this.gravity = 40;
         // Animation
         this.animation = "Walk Forward";
@@ -168,6 +171,7 @@ class character {
         this.actualCenterY;
         this.colorG = 255;
         this.colorB = 255;
+        this.HIT = false;
     }
     update() {
         this.pos.z += this.velocity.z *dt;
@@ -176,10 +180,14 @@ class character {
             this.pos.z = 0;
             this.velocity.z = 0;
         }
-        if (this.pos.z >0) {
+        if (this.HIT) {
             this.previousAnimation = this.animation;
+            if (this.animation.startsWith("Walk ")) {
+                this.animation = this.animation.replace("Walk ", "");
+            }
             if (!this.animation.includes("Hit")) {
                 this.animation = `Hit ${this.animation}`;
+                this.frameNumber = 0;
             }
         } else {
             this.animation = this.animation.replace("Hit ", "");
@@ -218,19 +226,22 @@ class character {
         // SHADOW
         ctx.globalAlpha = 0.2;
         ctx.drawImage(playerShadow, this.pos.x-this.imageWidth/3.5, this.pos.y+2)
+
         // HITBOX
         this.hitbox.x = this.pos.x - this.width /2.2;
-        this.hitbox.y = this.pos.y-this.pos.z - (this.length+25)
+        this.hitbox.y = this.pos.y-this.pos.z - (this.length+this.uphit)
         //console.log(this.pos.z);
         if (this.pos.z > 0) {
             this.hitbox.y = this.pos.y-this.pos.z - (this.length+5) - 30
         }
         // TODO: 10/17/25 The hitbox is not centered well.
         ctx.globalAlpha = 1.0;
-        ctx.fillStyle = "red";
-        ctx.globalAlpha = 0.2;
-        ctx.fillRect(this.hitbox.x, this.hitbox.y, this.width, this.length);
-        ctx.globalAlpha = 1.0;
+        if (DEBUG) {
+            ctx.fillStyle = "red";
+            ctx.globalAlpha = 0.5;
+            ctx.fillRect(this.hitbox.x, this.hitbox.y, this.width, this.length);
+            ctx.globalAlpha = 1.0;
+        }
 
         // Hit Right/Left
         if (this.angle < this.neutral) {
@@ -238,7 +249,7 @@ class character {
         } else if (this.angle > this.neutral) {
             this.angle -= 1*dt;
         }
-        console.log(this.force);
+        //console.log(this.force);
         if (this.force > 20) {
             this.force -= 10*dt;
             if (this.colorG < 255 && this.colorB < 255) {
@@ -400,16 +411,28 @@ function gameUpdate() {
     let now = performance.now();
     dt = (now - lastTime) / 1000; // convert ms to seconds
     lastTime = now;
-    // Collisions - hit ball
-    if (ballC1Collision == "t" && (Character.pos.y < Ball.pos.y + 5 && Character.pos.y > Ball.pos.y - 5)) {
+    // Collisions - hit ball hit
+    if (ballC1Collision == "t" && (Character.pos.y < Ball.pos.y + 5 && Character.pos.y > Ball.pos.y - 5) && Character.HIT == false) {
         Ball.velocity.z = 45;
         Ball.velocity.y = -20;
         Ball.velocity.x = Character.newPointX - Character.actualCenterX;
+        Character.HIT = true;
+        Ball.pos.z += 14;
+        console.log("I HIT it");
+    } 
+    if (TICK % 30 == 0) {
+        Character.HIT = false;
     }
-    if (ballC2Collision == "t" && (opponent.pos.y < Ball.pos.y + 10 && opponent.pos.y > Ball.pos.y - 10)) {
+    if (ballC2Collision == "t" && (opponent.pos.y < Ball.pos.y + 10 && opponent.pos.y > Ball.pos.y - 10) && opponent.HIT == false) {
         Ball.velocity.z = 45;
         Ball.velocity.y = 20;
-        Ball.velocity.x = Character.newPointX - Character.actualCenterX;
+        Ball.velocity.x = opponent.newPointX - opponent.actualCenterX;
+        opponent.HIT = true;
+        Ball.pos.z += 14;
+        console.log("I HIT it");
+    } 
+    if (TICK % 30 == 0) {
+        opponent.HIT = false;
     }
     ballC1Collision = circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length);
     ballC2Collision = circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, opponent.hitbox.x, opponent.hitbox.y, opponent.width, opponent.length)
@@ -448,6 +471,8 @@ function gameUpdate() {
     // TICK COUNTER
     TICK++;
 
+    // DEBUG 11/20/25
+    DEBUG = document.querySelector('input[type=checkbox]').checked;
 }
 // Trapezoid points
 let sideLines = 0.1;
