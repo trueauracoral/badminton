@@ -130,6 +130,8 @@ class ball {
 
         // Vertical Height line
         ctx.beginPath();
+        ctx.strokeStyle="#CAD4E3"
+        ctx.lineWidth = 2;
         ctx.setLineDash([2, 2]);
         ctx.moveTo(this.pos.x+6, this.pos.y-this.pos.z+16);
         ctx.lineTo(this.pos.x+6, this.pos.y+6);
@@ -258,30 +260,32 @@ class character {
             }
             console.log(`COLORS: ${this.colorG} ${this.colorB}`);
         }
-        ctx.beginPath()
-        ctx.lineWidth = 1
-        this.actualCenterX = this.pos.x + this.center.x;
-        this.actualCenterY = this.pos.y + this.center.y;
-        ctx.moveTo(this.actualCenterX, this.actualCenterY);
-        this.newPointX = this.actualCenterX + (this.force * Math.cos(this.angle));
-        this.newPointY = this.actualCenterY + (this.force * Math.sin(this.angle));
-        let angleArrow = 8.95;
-        ctx.lineTo(this.newPointX, this.newPointY);
-        ctx.moveTo(this.newPointX, this.newPointY);
-        ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle+angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle+angleArrow)));
-        ctx.moveTo(this.newPointX, this.newPointY);
-        ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle-angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle-angleArrow)));
-        //console.log(this.neutral);
-        //console.log(this.angle);
-        //console.log(this.newPointX - this.center.x)
-        //// draw
-        ctx.lineWidth = 4;
-        //https://stackoverflow.com/a/20874475/24903843
-        ctx.strokeStyle="black";
-        ctx.stroke();
-        ctx.strokeStyle=`rgb(255 ${this.colorG} ${this.colorB})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        if (Ball.pos.y > height - netH-netY) {
+            ctx.beginPath()
+            ctx.lineWidth = 1
+            this.actualCenterX = this.pos.x + this.center.x;
+            this.actualCenterY = this.pos.y + this.center.y;
+            ctx.moveTo(this.actualCenterX, this.actualCenterY);
+            this.newPointX = this.actualCenterX + (this.force * Math.cos(this.angle));
+            this.newPointY = this.actualCenterY + (this.force * Math.sin(this.angle));
+            let angleArrow = 8.95;
+            ctx.lineTo(this.newPointX, this.newPointY);
+            ctx.moveTo(this.newPointX, this.newPointY);
+            ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle+angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle+angleArrow)));
+            ctx.moveTo(this.newPointX, this.newPointY);
+            ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle-angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle-angleArrow)));
+            //console.log(this.neutral);
+            //console.log(this.angle);
+            //console.log(this.newPointX - this.center.x)
+            //// draw
+            ctx.lineWidth = 4;
+            //https://stackoverflow.com/a/20874475/24903843
+            ctx.strokeStyle="black";
+            ctx.stroke();
+            ctx.strokeStyle=`rgb(255 ${this.colorG} ${this.colorB})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
     }
 }
 let Ball = new ball(vec2(100, 223));
@@ -400,6 +404,10 @@ function AImovement(dt) {
     if (opponent.pos.y > netY + netH-20) {
         opponent.pos.y - netY+netH-20;
     }
+    if (TICK % 100 == 0) {
+        opponent.moving = false;
+    }
+    //console.log(opponent.moving)
 }
 
 let lastTime = performance.now();
@@ -429,7 +437,7 @@ function gameUpdate() {
         Ball.velocity.x = opponent.newPointX - opponent.actualCenterX;
         opponent.HIT = true;
         Ball.pos.z += 14;
-        console.log("I HIT it");
+        //console.log("I HIT it");
     } 
     if (TICK % 30 == 0) {
         opponent.HIT = false;
@@ -551,15 +559,27 @@ function gameDraw() {
 
     Character.draw();
     sideview.beginPath();
+    // BALL
     sideview.rect(
-        (Ball.pos.y/height) * sideViewWidth,
-        ((height - (Ball.pos.z)) / height) * sideViewHeight - 8, 
+        Math.floor((Ball.pos.y/height) * sideViewWidth),
+        Math.floor(((height - (Ball.pos.z)) / height) * sideViewHeight - 8), 
         3,3);
-    
+    // NET
     sideview.rect(
         ((netY / height) * sideViewWidth)+ 20,
-        ((netH / height)* sideViewHeight +10)
-        ,3,5);
+        ((netH / height)* sideViewHeight +10),
+        2,5);
+    // P1
+    sideview.rect(
+        Math.floor((Character.pos.y/height) * sideViewWidth),
+        sideViewHeight - 9.5, 
+        3,5);
+    sideview.stroke();
+    // P2
+    sideview.rect(
+        Math.floor((opponent.pos.y/height) * sideViewWidth),
+        sideViewHeight - 9.5, 
+        3,5);
     sideview.stroke();
 }
 
