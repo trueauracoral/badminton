@@ -19,9 +19,6 @@
             - [X] Backward
     - [X] Player 2
 ## Code
-- [ ] Organize the code into seperate files.
-- [X] Make it use the player jump sprite when hitting the ball.
-    - D: 11/20/25
 - [ ] Need to make it so that way he doesn't go past the trapezoidal permiter
     - A: 11/14/25
 - [ ] Need to make it so that way he shoots the ball where the player isn't located but also not outside the trapezoid
@@ -41,6 +38,10 @@
 - [X] Make it so that way you can't run and continue hitting the ball. 
     - ASSIGNED: (11/18/25)
     - COMPLETED: (11/20/25)
+- [X] Organize the code into seperate files.
+    - D: 11/22/25
+- [X] Make it use the player jump sprite when hitting the ball.
+    - D: 11/20/25
 ### Polish
 - [ ] Make the ball grow darker as it's away from the ground lighter as it gets closer.
     - Assigned: (11/18/25)
@@ -175,3 +176,5 @@ dividing intos seperate files I must do even if tedious because it's a good lear
 
 Also made it so that way you can't run into the ball and keep hitting it. You can only hit it once. Debug tool comes in handy
 It uses the jump sprite when hitting the ball as well.
+## 11/22/25
+Split everything into several files
