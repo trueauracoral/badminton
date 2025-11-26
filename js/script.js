@@ -6,8 +6,8 @@ ctx.imageSmoothingEnabled= false;
 // Net
 let net = loadImage("./assets/net.png");
 let netX = halfWidth - 233/2;
-let netY = height*0.4;
 let netH = 65;
+let netY = height*0.5 - netH;
 
 // Globals
 let TICK = 0;
@@ -133,6 +133,46 @@ function AImovement(dt) {
         opponent.moving = false;
     }
     //console.log(opponent.moving)
+    // AI shoots and maybe scores??!! 11/25/25
+    let startPost = vec2(opponent.actualCenterX, opponent.actualCenterY);
+    let goalPost = Character.pos;
+    let distanceX = goalPost.x - startPost.x
+    let distanceY = goalPost.y - startPost.y
+    //let shotAngle = Math.atan2(distanceY, distanceX);
+    let shotAngleLeft = (3*Math.PI)/4
+    let shotAngleRight = Math.PI/4
+    let shotAngle = shotAngleLeft;
+    let shotLength = Math.hypot(distanceX, distanceY);
+    let endX = startPost.x + shotLength* Math.cos(shotAngle)
+    let endY = startPost.y + shotLength* Math.sin(shotAngle)
+    //console.log(shotAngle);
+    function shotDistance() {
+        endX = startPost.x + shotLength* Math.cos(shotAngle)
+        return Math.abs(endX - Character.pos.x);
+    }
+    let leftDistance = shotDistance();
+    shotAngle = shotAngleRight;
+    let rightDistance = shotDistance();
+    shotAngle = opponent.angle;
+    shotDistance();
+    console.log(`Left: ${leftDistance}; Right: ${rightDistance}`)
+    let shootSpeed = 2*dt
+    if (leftDistance > rightDistance) {
+        if (opponent.angle + shootSpeed < shotAngleLeft && endX > topLeft.x) {
+            opponent.angle += shootSpeed;
+        }
+    } else if (leftDistance < rightDistance) {
+        if (opponent.angle - shootSpeed > shotAngleRight && endX < topRight.x) {
+            opponent.angle -= shootSpeed;
+            console.log("GOING RIGHT")
+        }
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(startPost.x, startPost.y);
+    ctx.lineTo(endX, endY); 
+    ctx.stroke()
+    console.log(opponent.angle);
 }
 
 let lastTime = performance.now();
@@ -147,13 +187,14 @@ function gameUpdate() {
     // Collisions - hit ball hit
     if (ballC1Collision == "t" && (Character.pos.y < Ball.pos.y + 5 && Character.pos.y > Ball.pos.y - 5) && Character.HIT == false) {
         Ball.velocity.z = 45;
-        Ball.velocity.y = -20;
+        Ball.velocity.y = - (Character.force);
         Ball.velocity.x = Character.newPointX - Character.actualCenterX;
         Character.HIT = true;
         Ball.pos.z += 14;
         console.log("I HIT it");
     } 
-    if (TICK % 30 == 0) {
+    //console.log(Character.HIT);
+    if (TICK % 50 == 0) {
         Character.HIT = false;
     }
     if (ballC2Collision == "t" && (opponent.pos.y < Ball.pos.y + 10 && opponent.pos.y > Ball.pos.y - 10) && opponent.HIT == false) {
@@ -164,7 +205,7 @@ function gameUpdate() {
         Ball.pos.z += 14;
         //console.log("I HIT it");
     } 
-    if (TICK % 30 == 0) {
+    if (TICK % 50 == 0) {
         opponent.HIT = false;
     }
     ballC1Collision = circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length);
@@ -197,9 +238,9 @@ function gameUpdate() {
     } else {
         outOfBounds = true;
     }
-    AImovement(dt);
     updateInput(dt);
     Character.update();
+    AImovement(dt);
     opponent.update();
     // TICK COUNTER
     TICK++;
@@ -209,34 +250,36 @@ function gameUpdate() {
 }
 // Trapezoid points
 let sideLines = 0.1;
-let diagonal = 20;
-let topLeft = { x: width * sideLines + diagonal, y: height * 0.1 };
-let topRight = { x: width - (width * sideLines) - diagonal, y: height * 0.1 };
-let bottomLeft = { x: width * sideLines, y: height - height * 0.1 };
-let bottomRight = { x: width - (width * sideLines), y: height - height * 0.1 };
+let verticalLines = 0.2
+let diagonal = 15;
+let topLeft = { x: width * sideLines + diagonal, y: height * verticalLines };
+let topRight = { x: width - (width * sideLines) - diagonal, y: height * verticalLines };
+let bottomLeft = { x: width * sideLines, y: height - height * verticalLines };
+let bottomRight = { x: width - (width * sideLines), y: height - height * verticalLines };
 let vertices = [topLeft, topRight, bottomRight, bottomLeft];
 function gameDraw() {
     ctx.strokeStyle="white";
+    ctx.lineWidth = 2;
     ctx.beginPath();
     // TOP
-    ctx.moveTo(width * sideLines + diagonal, height * 0.1);
-    ctx.lineTo(width - (width * sideLines) - diagonal, height * 0.1);
+    ctx.moveTo(topLeft.x, topLeft.y);
+    ctx.lineTo(topRight.x, topRight.y);
 
     // BOTTOM
-    ctx.moveTo(width * sideLines, height - height * 0.1);
-    ctx.lineTo(width - (width * sideLines), height - height * 0.1);
+    ctx.moveTo(topRight.x, topRight.y);
+    ctx.lineTo(bottomRight.x, bottomRight.y);
 
     // SIDE LEFT
-    ctx.moveTo(width * sideLines + diagonal, height * 0.1);
-    ctx.lineTo(width * sideLines, height - height * 0.1);
+    ctx.moveTo(bottomRight.x, bottomRight.y);
+    ctx.lineTo(bottomLeft.x, bottomLeft.y);
 
     // SIDE RIGHT
-    ctx.moveTo(width - width * sideLines - diagonal, height * 0.1);
-    ctx.lineTo(width - width * sideLines, height - height * 0.1);
+    ctx.moveTo(bottomLeft.x, bottomLeft.y);
+    ctx.lineTo(topLeft.x, topLeft.y);
 
     // FRONT LINES
-    const topY = height * 0.1;
-    const bottomY = height - height * 0.1;
+    const topY = height * sideLines;
+    const bottomY = height - height * sideLines;
     const H = bottomY - topY;
     const Wb = width - 2 * (width * sideLines);
     const Wt = Wb - 2 * diagonal;
@@ -253,19 +296,16 @@ function gameDraw() {
         ctx.lineTo(x2, yCanvas);
     }
 
-    let bottomFrontLine = 0.4;
-    let topFrontLine = 0.65;
-
-    const bottomFrontY = height - height * bottomFrontLine;
-    const topFrontY = height - height * topFrontLine;
+    const bottomFrontY = (bottomLeft.y-topLeft.y) * 0.75 + topLeft.y;
+    const topFrontY = (bottomLeft.y-topLeft.y) * 0.25 + topLeft.y;
 
     drawFrontLine(bottomFrontY);
     drawFrontLine(topFrontY);
 
-    //ctx.rect(topLeft.x, topLeft.y, 3,3)
-    //ctx.rect(topRight.x, topRight.y, 3,3)
-    //ctx.rect(bottomLeft.x, bottomLeft.y, 3,3)
-    //ctx.rect(bottomRight.x,bottomRight.y,3,3)
+    ctx.rect(topLeft.x, topLeft.y, 3,3)
+    ctx.rect(topRight.x, topRight.y, 3,3)
+    ctx.rect(bottomLeft.x, bottomLeft.y, 3,3)
+    ctx.rect(bottomRight.x,bottomRight.y,3,3)
     // Draw all lines
     ctx.stroke();
 
@@ -273,6 +313,7 @@ function gameDraw() {
     //NET
     //console.log("BallY: " + Ball.pos.y - Ball.pos.z)
     //console.log("Net Y: " + netY);
+    //Ball.draw();
     if (Ball.pos.y > netY+60) {
         ctx.drawImage(net, netX, netY);
         Ball.draw();
@@ -350,17 +391,20 @@ window.addEventListener("keyup", (e) => {
 function updateInput(dt) {
     let speed = Character.speed * dt;
     let shootSpeed = 2*dt;
-    let shotRange = Math.PI / 4;
     // Up/Down/Left/Right
     Character.moving = keys.ArrowUp || keys.KeyW || keys.ArrowDown || keys.KeyS || keys.ArrowLeft || keys.KeyA || keys.ArrowRight || keys.KeyD;
     let addY = 0;
     let addX = 0;
     if (keys.ArrowUp || keys.KeyW) {
-        addY -= 1;
+        if (Character.pos.y > netY+netH) {
+            addY -= 1;
+        }
         Character.animation ="Backward"
     }
     if (keys.ArrowDown || keys.KeyS) {
-        addY += 1;
+        if (Character.pos.y < height) {
+            addY += 1;
+        }
         Character.animation ="Forward"
     }
     

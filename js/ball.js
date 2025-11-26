@@ -37,20 +37,7 @@ class ball {
         this.groundCenter.y = this.pos.y-4;
         ctx.drawImage(ballShadow,this.groundCenter.x,this.groundCenter.y)
         ctx.globalAlpha = 1.0;
-
-        // IMAGE
-        // Change this later to subtract by size of the ball. 9/17/25
-        //ctx.fillRect(this.pos.x - 1, this.pos.y-2-this.pos.z, 4, 4);
-        ctx.drawImage(ballImage, this.pos.x - 4, this.pos.y -4 - this.pos.z)
-
-        // HITBOX
-        //ctx.globalAlpha = 0.5;
-        //ctx.beginPath();
-        //ctx.fillStyle="red";
-        //ctx.arc(this.hitbox.x, this.hitbox.y, 11, 0, 2*Math.PI);
-        //ctx.fill();
-        //ctx.globalAlpha = 1;
-
+        
         // Vertical Height line
         ctx.beginPath();
         ctx.strokeStyle="#CAD4E3"
@@ -60,6 +47,22 @@ class ball {
         ctx.lineTo(this.pos.x+6, this.pos.y+6);
         ctx.stroke();
         ctx.setLineDash([0,0])
+
+        // IMAGE
+        // Change this later to subtract by size of the ball. 9/17/25
+        //ctx.fillRect(this.pos.x - 1, this.pos.y-2-this.pos.z, 4, 4);
+        ctx.drawImage(ballImage, this.pos.x - 4, this.pos.y -4 - this.pos.z)
+
+        // HITBOX
+        if (DEBUG) {
+            ctx.globalAlpha = 0.5;
+            ctx.beginPath();
+            ctx.fillStyle="red";
+            ctx.arc(this.hitbox.x, this.hitbox.y, 11, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+
     }
 }
 

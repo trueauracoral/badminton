@@ -122,32 +122,31 @@ class character {
             }
             console.log(`COLORS: ${this.colorG} ${this.colorB}`);
         }
-        if (Ball.pos.y > height - netH-netY) {
-            ctx.beginPath()
-            ctx.lineWidth = 1
-            this.actualCenterX = this.pos.x + this.center.x;
-            this.actualCenterY = this.pos.y + this.center.y;
-            ctx.moveTo(this.actualCenterX, this.actualCenterY);
-            this.newPointX = this.actualCenterX + (this.force * Math.cos(this.angle));
-            this.newPointY = this.actualCenterY + (this.force * Math.sin(this.angle));
-            let angleArrow = 8.95;
-            ctx.lineTo(this.newPointX, this.newPointY);
-            ctx.moveTo(this.newPointX, this.newPointY);
-            ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle+angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle+angleArrow)));
-            ctx.moveTo(this.newPointX, this.newPointY);
-            ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle-angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle-angleArrow)));
-            //console.log(this.neutral);
-            //console.log(this.angle);
-            //console.log(this.newPointX - this.center.x)
-            //// draw
-            ctx.lineWidth = 4;
-            //https://stackoverflow.com/a/20874475/24903843
-            ctx.strokeStyle="black";
-            ctx.stroke();
-            ctx.strokeStyle=`rgb(255 ${this.colorG} ${this.colorB})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-        }
+        
+        ctx.beginPath()
+        ctx.lineWidth = 1
+        this.actualCenterX = this.pos.x + this.center.x;
+        this.actualCenterY = this.pos.y + this.center.y;
+        ctx.moveTo(this.actualCenterX, this.actualCenterY);
+        this.newPointX = this.actualCenterX + (this.force * Math.cos(this.angle));
+        this.newPointY = this.actualCenterY + (this.force * Math.sin(this.angle));
+        let angleArrow = 8.95;
+        ctx.lineTo(this.newPointX, this.newPointY);
+        ctx.moveTo(this.newPointX, this.newPointY);
+        ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle+angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle+angleArrow)));
+        ctx.moveTo(this.newPointX, this.newPointY);
+        ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle-angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle-angleArrow)));
+        //console.log(this.neutral);
+        //console.log(this.angle);
+        //console.log(this.newPointX - this.center.x)
+        //// draw
+        ctx.lineWidth = 4;
+        //https://stackoverflow.com/a/20874475/24903843
+        ctx.strokeStyle="black";
+        ctx.stroke();
+        ctx.strokeStyle=`rgb(255 ${this.colorG} ${this.colorB})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
     }
 }
 

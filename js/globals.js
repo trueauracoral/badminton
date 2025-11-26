@@ -3,7 +3,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let scalingFactor = 2;
 canvas.width =250 * scalingFactor;
-canvas.height = 300 * scalingFactor;
+canvas.height = 400 * scalingFactor;
 ctx.scale(scalingFactor, scalingFactor);
 
 let width = canvas.width / scalingFactor

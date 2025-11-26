@@ -19,22 +19,23 @@
             - [X] Backward
     - [X] Player 2
 ## Code
-- [ ] Need to make it so that way he doesn't go past the trapezoidal permiter
-    - A: 11/14/25
-- [ ] Need to make it so that way he shoots the ball where the player isn't located but also not outside the trapezoid
+- [ ] Need to make it so that way the player can decide when and how to shoot the ball. in 2 player it must randomly select who shoots.
+    - A: 11/23/25
+- [X] Need to make AI so that way he shoots the ball where the player isn't located but also not outside the trapezoid
     - A: 11/15/25
 - [ ] Menu 
     - Be able to choose 1P/2P
     - A: (11/16/25)
-- [ ] Make it so that way based on the direction l/r the player goes that's where the ball goes.
-    - [X] Make it so it doesn't go past a left most bounds and a right most bounds
-    - [X] Make it so you can make it grow in size 
-        - [X] perhaps change collors as a power indicator
-    - [ ] Only make it appear when the ball is near the player
 - [ ] Make an indicator when the ball has gone offscreen
     - ASSIGNED: (10/31/25)
 - [ ] Make the side view prettier
     - ASSIGNED: (11/01/25)
+- [X] Make it so that way based on the direction l/r the player goes that's where the ball goes.
+    - [X] Make it so it doesn't go past a left most bounds and a right most bounds
+    - [X] Make it so you can make it grow in size 
+        - [X] perhaps change collors as a power indicator
+    - [X] Only make it appear when the ball is near the player
+    - D: 11/22/25
 - [X] Make it so that way you can't run and continue hitting the ball. 
     - ASSIGNED: (11/18/25)
     - COMPLETED: (11/20/25)
@@ -178,3 +179,9 @@ Also made it so that way you can't run into the ball and keep hitting it. You ca
 It uses the jump sprite when hitting the ball as well.
 ## 11/22/25
 Split everything into several files
+## 11/23/25
+Made the screen wider in height.
+## 11/25/25
+Worked on making enemy AI turn his arrow advantagously against the player
+He can play quite perfectly
+in life you can code your own friends. Clanker dev 101 -- me
