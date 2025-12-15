@@ -1,6 +1,6 @@
 import { character } from "./character.js";
 import { ball } from "./ball.js";
-import { vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, sideView, sideview, sideViewWidth, sideViewHeight, opponentSprite } from "./globals.js";
+import { vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, sideView, sideview, sideViewWidth, sideViewHeight, opponentSprite, getRandom} from "./globals.js";
 
 ctx.imageSmoothingEnabled= false;
 // Net
@@ -21,6 +21,7 @@ opponent.sprite = opponentSprite;
 opponent.angle = Math.PI/2;
 opponent.neutral = opponent.angle;
 opponent.center.y -= 20;
+opponent.drawArrow = true;
 
 // https://www.jeffreythompson.org/collision-detection/circle-rect.php
 function circleRect(cx, cy, radius, rx, ry, rw, rh) {
@@ -73,7 +74,7 @@ function polyPoint(vertices, px, py) {
     }
     return collision;
 }
-
+let choice = true
 function AImovement(dt) {
     let speed = (opponent.speed) * dt;
 
@@ -90,7 +91,7 @@ function AImovement(dt) {
     let distance = Math.hypot(dx, dy);
     //console.log(`DX: ${dx}\nDY: ${dy}`);
     
-    if (distance > 10) {
+    if (distance > 5) {
         if ((Math.abs(Math.floor(Math.abs(dx)) - Math.floor(Math.abs(dy)))) < 1) {
             // 11/14/25 It's like he can't catch up with the ball for some reason
             opponent.pos.x += (dx / distance) * (speed/dt+20)*dt;
@@ -155,35 +156,43 @@ function AImovement(dt) {
     let rightDistance = shotDistance();
     shotAngle = opponent.angle;
     shotDistance();
-    console.log(`Left: ${leftDistance}; Right: ${rightDistance}`)
+    //console.log(`Left: ${leftDistance}; Right: ${rightDistance}`)
     let shootSpeed = 2*dt
-    if (leftDistance > rightDistance) {
-        if (opponent.angle + shootSpeed < shotAngleLeft && endX > topLeft.x) {
+    if (TICK % 100 == 0) {
+
+        choice = Math.random() < 0.5;
+        console.log(`I MADE THE CHOICE: ${choice}`)
+    }
+    //if (leftDistance > rightDistance) {
+    if (choice == true) {
+        console.log(`GOING LEFT ${choice}`)
+        if (opponent.angle + shootSpeed < shotAngleLeft - getRandom(0,0.5) && endX > topLeft.x) {
             opponent.angle += shootSpeed;
         }
-    } else if (leftDistance < rightDistance) {
-        if (opponent.angle - shootSpeed > shotAngleRight && endX < topRight.x) {
+    } else if (choice == false) {
+        // } else if (leftDistance < rightDistance) {
+        if (opponent.angle - shootSpeed > shotAngleRight + getRandom(0,0.7) && endX < topRight.x) {
             opponent.angle -= shootSpeed;
-            console.log("GOING RIGHT")
+            console.log(`GOING RIGHT ${choice}`)
         }
     }
 
-    ctx.beginPath();
-    ctx.moveTo(startPost.x, startPost.y);
-    ctx.lineTo(endX, endY); 
-    ctx.stroke()
-    console.log(opponent.angle);
+    if (DEBUG) {
+        ctx.beginPath();
+        ctx.moveTo(startPost.x, startPost.y);
+        ctx.lineTo(endX, endY); 
+        ctx.stroke()
+        //console.log(opponent.angle);
+    }
+    
 }
 
-let lastTime = performance.now();
-let dt = 0;
+//let lastTime = performance.now();
+let dt;
 let ballC1Collision = false;
 let ballC2Collision = false;
 let outOfBounds = false
 function gameUpdate() {
-    let now = performance.now();
-    dt = (now - lastTime) / 1000; // convert ms to seconds
-    lastTime = now;
     // Collisions - hit ball hit
     if (ballC1Collision == "t" && (Character.pos.y < Ball.pos.y + 5 && Character.pos.y > Ball.pos.y - 5) && Character.HIT == false) {
         Ball.velocity.z = 45;
@@ -199,7 +208,7 @@ function gameUpdate() {
     }
     if (ballC2Collision == "t" && (opponent.pos.y < Ball.pos.y + 10 && opponent.pos.y > Ball.pos.y - 10) && opponent.HIT == false) {
         Ball.velocity.z = 45;
-        Ball.velocity.y = 20;
+        Ball.velocity.y = Character.force;
         Ball.velocity.x = opponent.newPointX - opponent.actualCenterX;
         opponent.HIT = true;
         Ball.pos.z += 14;
@@ -247,6 +256,9 @@ function gameUpdate() {
 
     // DEBUG 11/20/25
     DEBUG = document.querySelector('input[type=checkbox]').checked;
+    // DEBUG = true;
+    drawPixelText(`P1: ${Math.round(Character.pos.x)}, ${Math.round(Character.pos.y)}`,0,height*0.85)
+    drawPixelText(`P2: ${Math.round(opponent.pos.x)}, ${Math.round(opponent.pos.y)}`,0,height*0.9)
 }
 // Trapezoid points
 let sideLines = 0.1;
@@ -348,12 +360,30 @@ function gameDraw() {
         3,5);
     sideview.stroke();
 }
-
+let lastTime = performance.now();
 function gameLoop() {
+    let now = performance.now();
+    dt = (now - lastTime) / 1000;
+    lastTime = now;
+    if (dt > 0.05) {
+        dt = 0.05;
+    } 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     sideview.clearRect(0, 0, sideView.width, sideView.height);
     gameUpdate();
     gameDraw()
+    //if (document.hasFocus()) {
+    //    let now = performance.now();
+    //    dt = (now - lastTime) / 1000;
+    //    lastTime = now;
+    //    if (dt > 0.05) {
+    //        dt = 0.05;
+    //    } 
+    //    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //    sideview.clearRect(0, 0, sideView.width, sideView.height);
+    //    gameUpdate();
+    //    gameDraw()
+    //}
     window.requestAnimationFrame(gameLoop);    
 }
 

@@ -7,7 +7,7 @@ class ball {
         this.pos.z = 50;
         this.velocity = vec2(0, 0);
         this.velocity.z = 8;
-        this.gravity = 15;
+        this.gravity = 25;
         this.hitbox = vec2();
         this.radius = 11;
         this.groundCenter = vec2();

@@ -69,13 +69,13 @@
     - ASSIGNED: (10/31/25)
     - COMPLETED: (10/31/25)
 ## SFX
-    - [ ] Hand slapping ball various sounds
-        - ASSIGNED: (10/31/25)
-    - ball hitting net
-    - button pressing sounds
-    - sound for cranking the arrow
-    - sound for lengthening the arrow
-    - walking sound?
+- [ ] Hand slapping ball various sounds
+    - ASSIGNED: (10/31/25)
+- ball hitting net
+- button pressing sounds
+- sound for cranking the arrow
+- sound for lengthening the arrow
+- walking sound?
 # Devlog
 ## 9/12/25
 Setup project working on ball bounce have idea. 2d badminton like mario tennis top down. Implemented ball bouncing physics
@@ -185,3 +185,31 @@ Made the screen wider in height.
 Worked on making enemy AI turn his arrow advantagously against the player
 He can play quite perfectly
 in life you can code your own friends. Clanker dev 101 -- me
+## 11/28/25
+Figured out how to make it not do stuff when you switch the tab using document.hasfocus
+## 11/30/25
+Debug text of character positions
+Made it so that way I can stop the arrow from showing
+Made it so the AI just choses randomly which direction to go left or right every 100 frames or so
+## 12/14/25
+Make it so that way your shadow highlights when you can hit the ball. 
+
+# User Reports
+## 11/26/25
+- Users are confused that you can't just run up to the ball. You need to tap the ball and send it flying or something. Detection against this is still not working well
+- [X] Users feel the character is too slow
+- Ball looks weird in the top down 2d space. You can't see the ball when the player is on top of it.
+    - perhaps can detect for this and make the ball transparent on top of the player?
+- When the user gets out of the tab all of a sudden the game gets weird and speeds up
+    - [X] Must detect when inactive and pause the game
+- Softlock occurs when ball gets off the screen and when ball stops bouncing.
+    - Need to start work on a points system and start awarding points to either player.
+    - Need a reset condition on when a point is rewarded
+- [ ] Need award point when the character hits through the net.
+- [ ] Does the game only work on chrome???
+- [ ] Games name is badminton and not volleyball!
+- [X] Need to have a top/bottom thing that shows player and opponent x,y 
+- [X] Figure out how to make it easy to hit the ball
+    - Perhaps can make it so that way the shadow highlights when ball is hitable
+- IDEA to make the game more interesting: Have the ball wrap around if it's in air to the other side of the screen
+- 

@@ -1,4 +1,4 @@
-import { vec2, loadImage, drawPixelText, createAudio, ctx, width, height, canvas, halfWidth, halfHeight, playerSprite, opponentSprite, playerShadow } from "./globals.js";
+import { vec2, loadImage, drawPixelText, createAudio, ctx, width, height, canvas, halfWidth, halfHeight, playerSprite, opponentSprite, playerShadow, playerShadowHit } from "./globals.js";
 import { Ball, dt, TICK, DEBUG, netH, netY} from "./script.js"
 import animationData from "../assets/player animation.json" with { type: "json" };
 
@@ -10,7 +10,7 @@ class character {
         this.velocity = vec2(0,0);
         this.velocity.z = 0;
         this.friction = 1;
-        this.speed = 40;
+        this.speed = 60;
         this.length = 15;
         this.width = 40;
         this.uphit = 20;
@@ -35,6 +35,7 @@ class character {
         this.actualCenterY;
         this.colorG = 255;
         this.colorB = 255;
+        this.drawArrow = true;
         this.HIT = false;
     }
     update() {
@@ -89,7 +90,12 @@ class character {
         }
         // SHADOW
         ctx.globalAlpha = 0.2;
-        ctx.drawImage(playerShadow, this.pos.x-this.imageWidth/3.5, this.pos.y+2)
+        if (this.pos.y < Ball.pos.y + 5 && this.pos.y > Ball.pos.y - 5) {
+            ctx.globalAlpha = 0.5
+            ctx.drawImage(playerShadowHit, this.pos.x-this.imageWidth/3.5, this.pos.y+2)
+        } else {
+            ctx.drawImage(playerShadow, this.pos.x-this.imageWidth/3.5, this.pos.y+2)
+        }
 
         // HITBOX
         this.hitbox.x = this.pos.x - this.width /2.2;
@@ -122,31 +128,32 @@ class character {
             }
             console.log(`COLORS: ${this.colorG} ${this.colorB}`);
         }
-        
-        ctx.beginPath()
-        ctx.lineWidth = 1
         this.actualCenterX = this.pos.x + this.center.x;
         this.actualCenterY = this.pos.y + this.center.y;
-        ctx.moveTo(this.actualCenterX, this.actualCenterY);
         this.newPointX = this.actualCenterX + (this.force * Math.cos(this.angle));
         this.newPointY = this.actualCenterY + (this.force * Math.sin(this.angle));
-        let angleArrow = 8.95;
-        ctx.lineTo(this.newPointX, this.newPointY);
-        ctx.moveTo(this.newPointX, this.newPointY);
-        ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle+angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle+angleArrow)));
-        ctx.moveTo(this.newPointX, this.newPointY);
-        ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle-angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle-angleArrow)));
-        //console.log(this.neutral);
-        //console.log(this.angle);
-        //console.log(this.newPointX - this.center.x)
-        //// draw
-        ctx.lineWidth = 4;
-        //https://stackoverflow.com/a/20874475/24903843
-        ctx.strokeStyle="black";
-        ctx.stroke();
-        ctx.strokeStyle=`rgb(255 ${this.colorG} ${this.colorB})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        if (this.drawArrow) {
+            ctx.beginPath()
+            ctx.lineWidth = 1
+            ctx.moveTo(this.actualCenterX, this.actualCenterY);
+            let angleArrow = 8.95;
+            ctx.lineTo(this.newPointX, this.newPointY);
+            ctx.moveTo(this.newPointX, this.newPointY);
+            ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle+angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle+angleArrow)));
+            ctx.moveTo(this.newPointX, this.newPointY);
+            ctx.lineTo(this.newPointX + (this.forceAngle * Math.cos(this.angle-angleArrow)), this.newPointY+ (this.forceAngle * Math.sin(this.angle-angleArrow)));
+            //console.log(this.neutral);
+            //console.log(this.angle);
+            //console.log(this.newPointX - this.center.x)
+            //// draw
+            ctx.lineWidth = 4;
+            //https://stackoverflow.com/a/20874475/24903843
+            ctx.strokeStyle="black";
+            ctx.stroke();
+            ctx.strokeStyle=`rgb(255 ${this.colorG} ${this.colorB})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
     }
 }
 

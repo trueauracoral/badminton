@@ -25,12 +25,15 @@ sideview.scale(sideScaleFactor, sideScaleFactor);
 // Ball
 let ballImage = loadImage('./assets/ball.png');
 let ballShadow = loadImage('./assets/ball-shadow.png')
+let ballShadowHit = loadImage("./assets/ball-shadow-hit.png")
 // Player
 let playerSprite = loadImage("./assets/player animation.png");
 let opponentSprite = loadImage("./assets/opponent animation.png");
 let playerShadow = loadImage("./assets/player shadow.png")
+let playerShadowHit = loadImage("./assets/player shadow-hit.png")
 
-export { canvas, ctx, scalingFactor, width, height, halfWidth, halfHeight, sideView, sideview, sideViewWidth, sideViewHeight, halfSideWidth, halfHeightHeight, ballImage, ballShadow, playerSprite, opponentSprite, playerShadow}
+
+export { canvas, ctx, scalingFactor, width, height, halfWidth, halfHeight, sideView, sideview, sideViewWidth, sideViewHeight, halfSideWidth, halfHeightHeight, ballImage, ballShadow, playerSprite, opponentSprite, playerShadow, ballShadowHit, playerShadowHit}
 
 export function loadImage(src) {
     var img = new Image();
@@ -62,4 +65,9 @@ export function drawPixelText(text, x, y, outline=false, color="black") {
 }
 export function vec2(x, y) {
     return {x: x, y: y};
+}
+
+//https://stackoverflow.com/a/1527820/24903843
+export function getRandom(min, max) {
+    return Math.random() * (max - min) + min;
 }
