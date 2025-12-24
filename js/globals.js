@@ -2,7 +2,7 @@ const canvas = document.getElementById('canvas');
 
 const ctx = canvas.getContext('2d');
 let scalingFactor = 2;
-canvas.width =250 * scalingFactor;
+canvas.width =350 * scalingFactor;
 canvas.height = 400 * scalingFactor;
 ctx.scale(scalingFactor, scalingFactor);
 
@@ -11,17 +11,6 @@ let height = canvas.height / scalingFactor
 const halfWidth = width / 2;
 const halfHeight = height / 2;
 
-const sideView = document.getElementById('sideView');
-
-const sideview = sideView.getContext('2d');
-let sideScaleFactor = 2;
-sideView.width = 100 * sideScaleFactor;
-sideView.height = 25 * sideScaleFactor;
-let sideViewWidth = sideView.width / scalingFactor
-let sideViewHeight = sideView.height / scalingFactor
-const halfSideWidth = sideViewWidth / 2;
-const halfHeightHeight = sideViewHeight / 2;
-sideview.scale(sideScaleFactor, sideScaleFactor);
 // Ball
 let ballImage = loadImage('./assets/ball.png');
 let ballShadow = loadImage('./assets/ball-shadow.png')
@@ -33,7 +22,7 @@ let playerShadow = loadImage("./assets/player shadow.png")
 let playerShadowHit = loadImage("./assets/player shadow-hit.png")
 
 
-export { canvas, ctx, scalingFactor, width, height, halfWidth, halfHeight, sideView, sideview, sideViewWidth, sideViewHeight, halfSideWidth, halfHeightHeight, ballImage, ballShadow, playerSprite, opponentSprite, playerShadow, ballShadowHit, playerShadowHit}
+export { canvas, ctx, scalingFactor, width, height, halfWidth, halfHeight, ballImage, ballShadow, playerSprite, opponentSprite, playerShadow, ballShadowHit, playerShadowHit}
 
 export function loadImage(src) {
     var img = new Image();

@@ -15,6 +15,7 @@ class character {
         this.width = 40;
         this.uphit = 20;
         this.gravity = 40;
+        this.points = 0;
         // Animation
         this.animation = "Walk Forward";
         this.previousAnimation = this.animation;
@@ -90,7 +91,7 @@ class character {
         }
         // SHADOW
         ctx.globalAlpha = 0.2;
-        if (this.pos.y < Ball.pos.y + 5 && this.pos.y > Ball.pos.y - 5) {
+        if ((this.pos.x < Ball.pos.x + 5 && this.pos.x > Ball.pos.x -5) && (this.pos.y < Ball.pos.y + 5 && this.pos.y > Ball.pos.y - 5)) {
             ctx.globalAlpha = 0.5
             ctx.drawImage(playerShadowHit, this.pos.x-this.imageWidth/3.5, this.pos.y+2)
         } else {

@@ -1,6 +1,6 @@
 import { character } from "./character.js";
 import { ball } from "./ball.js";
-import { vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, sideView, sideview, sideViewWidth, sideViewHeight, opponentSprite, getRandom} from "./globals.js";
+import { vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, opponentSprite, getRandom} from "./globals.js";
 
 ctx.imageSmoothingEnabled= false;
 // Net
@@ -22,6 +22,7 @@ opponent.angle = Math.PI/2;
 opponent.neutral = opponent.angle;
 opponent.center.y -= 20;
 opponent.drawArrow = true;
+let lasthit = "nobody";
 
 // https://www.jeffreythompson.org/collision-detection/circle-rect.php
 function circleRect(cx, cy, radius, rx, ry, rw, rh) {
@@ -91,11 +92,16 @@ function AImovement(dt) {
     let distance = Math.hypot(dx, dy);
     //console.log(`DX: ${dx}\nDY: ${dy}`);
     
+    if (opponent.pos.y > netY + netH-20) {
+        opponent.pos.y - netY+netH-20;
+    }
     if (distance > 5) {
         if ((Math.abs(Math.floor(Math.abs(dx)) - Math.floor(Math.abs(dy)))) < 1) {
             // 11/14/25 It's like he can't catch up with the ball for some reason
-            opponent.pos.x += (dx / distance) * (speed/dt+20)*dt;
-            opponent.pos.y += (dy / distance) * (speed/dt+20)*dt;
+            if (opponent.pos.y + (dy / distance) * (speed/dt+20)*dt <  netY+netH-20) {
+                opponent.pos.x += (dx / distance) * (speed/dt+20)*dt;
+                opponent.pos.y += (dy / distance) * (speed/dt+20)*dt;
+            }
         } else if (Math.abs(dx) > Math.abs(dy)) {
             //console.log("HORIZONTAL")
             opponent.pos.x += (dx / distance) * speed;
@@ -126,9 +132,6 @@ function AImovement(dt) {
             opponent.animation = "Forward";
             opponent.moving = false;
         }
-    }
-    if (opponent.pos.y > netY + netH-20) {
-        opponent.pos.y - netY+netH-20;
     }
     if (TICK % 100 == 0) {
         opponent.moving = false;
@@ -161,11 +164,11 @@ function AImovement(dt) {
     if (TICK % 100 == 0) {
 
         choice = Math.random() < 0.5;
-        console.log(`I MADE THE CHOICE: ${choice}`)
+        //console.log(`I MADE THE CHOICE: ${choice}`)
     }
     //if (leftDistance > rightDistance) {
     if (choice == true) {
-        console.log(`GOING LEFT ${choice}`)
+        //console.log(`GOING LEFT ${choice}`)
         if (opponent.angle + shootSpeed < shotAngleLeft - getRandom(0,0.5) && endX > topLeft.x) {
             opponent.angle += shootSpeed;
         }
@@ -173,7 +176,7 @@ function AImovement(dt) {
         // } else if (leftDistance < rightDistance) {
         if (opponent.angle - shootSpeed > shotAngleRight + getRandom(0,0.7) && endX < topRight.x) {
             opponent.angle -= shootSpeed;
-            console.log(`GOING RIGHT ${choice}`)
+            //console.log(`GOING RIGHT ${choice}`)
         }
     }
 
@@ -192,6 +195,15 @@ let dt;
 let ballC1Collision = false;
 let ballC2Collision = false;
 let outOfBounds = false
+function reset() {
+    let middle = 171
+    Character.pos = vec2(middle, 320)
+    Character.pos.z = 0
+    opponent.pos = vec2(middle, 80)
+    opponent.pos.z = 0
+    Ball.pos.z = 20
+    Ball.pos.x = middle -5
+}
 function gameUpdate() {
     // Collisions - hit ball hit
     if (ballC1Collision == "t" && (Character.pos.y < Ball.pos.y + 5 && Character.pos.y > Ball.pos.y - 5) && Character.HIT == false) {
@@ -200,7 +212,8 @@ function gameUpdate() {
         Ball.velocity.x = Character.newPointX - Character.actualCenterX;
         Character.HIT = true;
         Ball.pos.z += 14;
-        console.log("I HIT it");
+        //console.log("I HIT it");
+        lasthit == "character"
     } 
     //console.log(Character.HIT);
     if (TICK % 50 == 0) {
@@ -213,6 +226,7 @@ function gameUpdate() {
         opponent.HIT = true;
         Ball.pos.z += 14;
         //console.log("I HIT it");
+        lasthit == "opponent"
     } 
     if (TICK % 50 == 0) {
         opponent.HIT = false;
@@ -238,7 +252,7 @@ function gameUpdate() {
         //console.log("Collided!!!")
         drawPixelText("Collided with net", 0,0)
     }
-    //drawPixelText("Out of Bounds: " + outOfBounds, 0,30);
+    drawPixelText("Out of Bounds: " + outOfBounds, 0,30);
     Ball.update();
 
     // Is in field?
@@ -246,6 +260,16 @@ function gameUpdate() {
         outOfBounds = false;
     } else {
         outOfBounds = true;
+    }
+    // Has the ball touched ground
+    if (Ball.pos.z == 0) {
+        if (lasthit == "nobody") {
+            reset()
+        }
+        if (lasthit == "character") {
+            Character.pos = vec2(128, 80)
+            Ball.pos.x = Character.pos.x
+        }
     }
     updateInput(dt);
     Character.update();
@@ -257,12 +281,12 @@ function gameUpdate() {
     // DEBUG 11/20/25
     DEBUG = document.querySelector('input[type=checkbox]').checked;
     // DEBUG = true;
-    drawPixelText(`P1: ${Math.round(Character.pos.x)}, ${Math.round(Character.pos.y)}`,0,height*0.85)
-    drawPixelText(`P2: ${Math.round(opponent.pos.x)}, ${Math.round(opponent.pos.y)}`,0,height*0.9)
+    drawPixelText(`P1: ${Math.round(Character.pos.x)}, ${Math.round(Character.pos.y)}`,0,height*0.9)
+    drawPixelText(`P2: ${Math.round(opponent.pos.x)}, ${Math.round(opponent.pos.y)}`,0,height*0.95)
 }
 // Trapezoid points
-let sideLines = 0.1;
-let verticalLines = 0.2
+let sideLines = 0.13;
+let verticalLines = 0.13
 let diagonal = 15;
 let topLeft = { x: width * sideLines + diagonal, y: height * verticalLines };
 let topRight = { x: width - (width * sideLines) - diagonal, y: height * verticalLines };
@@ -336,29 +360,10 @@ function gameDraw() {
     }
 
     Character.draw();
-    sideview.beginPath();
-    // BALL
-    sideview.rect(
-        Math.floor((Ball.pos.y/height) * sideViewWidth),
-        Math.floor(((height - (Ball.pos.z)) / height) * sideViewHeight - 8), 
-        3,3);
-    // NET
-    sideview.rect(
-        ((netY / height) * sideViewWidth)+ 20,
-        ((netH / height)* sideViewHeight +10),
-        2,5);
-    // P1
-    sideview.rect(
-        Math.floor((Character.pos.y/height) * sideViewWidth),
-        sideViewHeight - 9.5, 
-        3,5);
-    sideview.stroke();
-    // P2
-    sideview.rect(
-        Math.floor((opponent.pos.y/height) * sideViewWidth),
-        sideViewHeight - 9.5, 
-        3,5);
-    sideview.stroke();
+
+    // POINTS
+    drawPixelText(Character.points, width / 2 - 6, 360, false, "white");
+    drawPixelText(opponent.points, width / 2 - 6, 30, false, "white");
 }
 let lastTime = performance.now();
 function gameLoop() {
@@ -369,7 +374,6 @@ function gameLoop() {
         dt = 0.05;
     } 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    sideview.clearRect(0, 0, sideView.width, sideView.height);
     gameUpdate();
     gameDraw()
     //if (document.hasFocus()) {

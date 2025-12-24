@@ -193,6 +193,10 @@ Made it so that way I can stop the arrow from showing
 Made it so the AI just choses randomly which direction to go left or right every 100 frames or so
 ## 12/14/25
 Make it so that way your shadow highlights when you can hit the ball. 
+## 12/21/25
+Removed the sideview
+## 12/23/25
+Fixed opponent  going through the net when diagnoal
 
 # User Reports
 ## 11/26/25
