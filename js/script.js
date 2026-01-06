@@ -1,6 +1,6 @@
 import { character } from "./character.js";
 import { ball } from "./ball.js";
-import { vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, opponentSprite, getRandom} from "./globals.js";
+import { vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, opponentSprite, getRandom, turn} from "./globals.js";
 
 ctx.imageSmoothingEnabled= false;
 // Net
@@ -197,12 +197,16 @@ let ballC2Collision = false;
 let outOfBounds = false
 function reset() {
     let middle = 171
-    Character.pos = vec2(middle, 320)
+    let vertDistance = 0.4;
+    Character.pos = vec2(middle, height * (1-vertDistance))
     Character.pos.z = 0
-    opponent.pos = vec2(middle, 80)
+    opponent.pos = vec2(middle, height * vertDistance)
     opponent.pos.z = 0
-    Ball.pos.z = 20
+    Ball.pos.z = 50
     Ball.pos.x = middle -5
+    Ball.velocity.x = 0;
+    Ball.velocity.y = 0;
+    Ball.velocity.z = 0;
 }
 function gameUpdate() {
     // Collisions - hit ball hit
@@ -213,7 +217,7 @@ function gameUpdate() {
         Character.HIT = true;
         Ball.pos.z += 14;
         //console.log("I HIT it");
-        lasthit == "character"
+        lasthit = "character"
     } 
     //console.log(Character.HIT);
     if (TICK % 50 == 0) {
@@ -226,7 +230,7 @@ function gameUpdate() {
         opponent.HIT = true;
         Ball.pos.z += 14;
         //console.log("I HIT it");
-        lasthit == "opponent"
+        lasthit = "opponent"
     } 
     if (TICK % 50 == 0) {
         opponent.HIT = false;
@@ -253,6 +257,7 @@ function gameUpdate() {
         drawPixelText("Collided with net", 0,0)
     }
     drawPixelText("Out of Bounds: " + outOfBounds, 0,30);
+    drawPixelText(lasthit, 0, 15)
     Ball.update();
 
     // Is in field?
@@ -262,13 +267,28 @@ function gameUpdate() {
         outOfBounds = true;
     }
     // Has the ball touched ground
+    //console.log(Ball.pos.z)
     if (Ball.pos.z == 0) {
         if (lasthit == "nobody") {
             reset()
-        }
-        if (lasthit == "character") {
-            Character.pos = vec2(128, 80)
-            Ball.pos.x = Character.pos.x
+            Ball.pos.x = Character.pos.x - 5
+            Ball.pos.y = Character.pos.y
+            Ball.pos.z = 100;
+            lasthit = "character"
+        } else if (lasthit == "character") {
+            reset()
+            Ball.pos.x = Character.pos.x - 5
+            Ball.pos.y = Character.pos.y
+            console.log(Ball.pos.y);
+            opponent.points += 1;
+            console.log("HELLO");
+        } else if (lasthit == "opponent") {
+            reset()
+            Ball.pos.x = opponent.pos.x -5
+            Ball.pos.y = opponent.pos.y
+            console.log(Ball.pos.y);
+            opponent.points += 1;
+            console.log("HELLO");
         }
     }
     updateInput(dt);

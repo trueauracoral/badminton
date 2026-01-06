@@ -21,8 +21,10 @@ let opponentSprite = loadImage("./assets/opponent animation.png");
 let playerShadow = loadImage("./assets/player shadow.png")
 let playerShadowHit = loadImage("./assets/player shadow-hit.png")
 
+let turn = 0
 
-export { canvas, ctx, scalingFactor, width, height, halfWidth, halfHeight, ballImage, ballShadow, playerSprite, opponentSprite, playerShadow, ballShadowHit, playerShadowHit}
+
+export { canvas, ctx, scalingFactor, width, height, halfWidth, halfHeight, ballImage, ballShadow, playerSprite, opponentSprite, playerShadow, ballShadowHit, playerShadowHit, turn}
 
 export function loadImage(src) {
     var img = new Image();

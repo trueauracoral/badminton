@@ -197,6 +197,8 @@ Make it so that way your shadow highlights when you can hit the ball.
 Removed the sideview
 ## 12/23/25
 Fixed opponent  going through the net when diagnoal
+## 1/5/25
+Implemented points and now it feels like a real game.
 
 # User Reports
 ## 11/26/25

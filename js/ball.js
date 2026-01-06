@@ -9,7 +9,7 @@ class ball {
         this.velocity.z = 8;
         this.gravity = 25;
         this.hitbox = vec2();
-        this.radius = 11;
+        this.radius = 8;
         this.groundCenter = vec2();
     }
     update() {
@@ -58,7 +58,7 @@ class ball {
             ctx.globalAlpha = 0.5;
             ctx.beginPath();
             ctx.fillStyle="red";
-            ctx.arc(this.hitbox.x, this.hitbox.y, 11, 0, 2*Math.PI);
+            ctx.arc(this.hitbox.x, this.hitbox.y, this.radius, 0, 2*Math.PI);
             ctx.fill();
             ctx.globalAlpha = 1;
         }
