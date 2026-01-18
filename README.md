@@ -21,15 +21,10 @@
 ## Code
 - [ ] Need to make it so that way the player can decide when and how to shoot the ball. in 2 player it must randomly select who shoots.
     - A: 11/23/25
-- [X] Need to make AI so that way he shoots the ball where the player isn't located but also not outside the trapezoid
-    - A: 11/15/25
-- [ ] Menu 
-    - Be able to choose 1P/2P
-    - A: (11/16/25)
 - [ ] Make an indicator when the ball has gone offscreen
     - ASSIGNED: (10/31/25)
-- [ ] Make the side view prettier
-    - ASSIGNED: (11/01/25)
+- [X] Need to make AI so that way he shoots the ball where the player isn't located but also not outside the trapezoid
+    - A: 11/15/25
 - [X] Make it so that way based on the direction l/r the player goes that's where the ball goes.
     - [X] Make it so it doesn't go past a left most bounds and a right most bounds
     - [X] Make it so you can make it grow in size 
@@ -44,8 +39,14 @@
 - [X] Make it use the player jump sprite when hitting the ball.
     - D: 11/20/25
 ### Polish
-- [ ] Make the ball grow darker as it's away from the ground lighter as it gets closer.
+- [ ] Menu 
+    - Be able to choose 1P/2P
+    - A: (11/16/25)
+- [ ] Make the side view prettier
+    - ASSIGNED: (11/01/25)
+- [X] Make the ball grow darker as it's away from the ground lighter as it gets closer.
     - Assigned: (11/18/25)
+    - Completed: (12/18/25)
 - [ ] Dash
     - [ ] Yokai watch style dash (10/26/25)
 ### GENERAL
@@ -199,6 +200,10 @@ Removed the sideview
 Fixed opponent  going through the net when diagnoal
 ## 1/5/25
 Implemented points and now it feels like a real game.
+## 1/18/25
+- Fixed the sideways
+- Made the shadow grow darker the closer it is to the ground
+- made the dashed line from the ball transparent and yellow
 
 # User Reports
 ## 11/26/25

@@ -5,7 +5,7 @@ import { vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, 
 ctx.imageSmoothingEnabled= false;
 // Net
 let net = loadImage("./assets/net.png");
-let netX = halfWidth - 233/2;
+let netX = halfWidth - 236/2;
 let netH = 65;
 let netY = height*0.5 - netH;
 
@@ -202,7 +202,7 @@ function reset() {
     Character.pos.z = 0
     opponent.pos = vec2(middle, height * vertDistance)
     opponent.pos.z = 0
-    Ball.pos.z = 50
+    Ball.pos.z = 100
     Ball.pos.x = middle -5
     Ball.velocity.x = 0;
     Ball.velocity.y = 0;
@@ -300,7 +300,7 @@ function gameUpdate() {
 
     // DEBUG 11/20/25
     DEBUG = document.querySelector('input[type=checkbox]').checked;
-    // DEBUG = true;
+    DEBUG = true;
     drawPixelText(`P1: ${Math.round(Character.pos.x)}, ${Math.round(Character.pos.y)}`,0,height*0.9)
     drawPixelText(`P2: ${Math.round(opponent.pos.x)}, ${Math.round(opponent.pos.y)}`,0,height*0.95)
 }
@@ -416,7 +416,7 @@ const keys = {
     ArrowDown: false,
     ArrowLeft: false,
     ArrowRight: false,
-    " ":false,
+    Space:false,
     ShiftLeft: false,
     ShiftRight: false,
     KeyA: false,
@@ -424,6 +424,9 @@ const keys = {
     KeyD: false,
     KeyE: false,
     KeyF: false,
+    KeyI: false,
+    KeyJ: false,
+    KeyL: false,
     KeyW: false,
     KeyS: false,
     KeyQ: false,
@@ -480,27 +483,27 @@ function updateInput(dt) {
         Character.pos.y += addY * speed
     }
     // JUMP
-    if (keys[" "]) {
-        Character.pos.z += speed;
-    }
+    // if (keys.Space) {
+    //     Character.pos.z += speed;
+    // }
     // Dash
-    if (keys.f) {
+    if (keys.KeyF) {
         Character.pos.x += addX * speed * 2;
     }
     // Shoot Left/Right
     //console.log("MAX: " + -1*shotRange);
     //console.log("NEW: " + Character.angle + shootSpeed * dt)
-    if (keys.KeyX) {
+    if (keys.KeyJ) {
         if (Character.angle - shootSpeed > -1*(Math.PI*3)/4) {
             Character.angle -= shootSpeed;
         }
     }
-    if (keys.KeyC) {
+    if (keys.KeyL) {
         if (Character.angle + shootSpeed < -1 *(Math.PI)/4) {
             Character.angle += shootSpeed;
         }
     }
-    if (keys.ShiftLeft) {
+    if (keys.KeyI) {
         console.log("hello");
         if (Character.force < 40) {
             Character.force += ((speed/dt)-10)*dt;

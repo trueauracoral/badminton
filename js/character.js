@@ -17,7 +17,7 @@ class character {
         this.gravity = 40;
         this.points = 0;
         // Animation
-        this.animation = "Walk Forward";
+        this.animation = "Walk Right";
         this.previousAnimation = this.animation;
         this.sprite = playerSprite;
         this.moving = false;
@@ -40,6 +40,7 @@ class character {
         this.HIT = false;
     }
     update() {
+        console.log(this.animation)
         this.pos.z += this.velocity.z *dt;
         this.velocity.z -= this.gravity * dt; // gravity pulls down
         if (this.pos.z <= 0) {
@@ -69,6 +70,12 @@ class character {
         }
     }
     draw() {
+        // Transparent
+        if (this.pos.x >= Ball.pos.x - 5 && this.pos.x <= Ball.pos.x + 5 && this.pos.y >= Ball.pos.y - 15 && this.pos.y <= Ball.pos.y + 15) {
+            ctx.globalAlpha = 0.85
+        } else {
+            ctx.globalAlpha = 1;
+        }
         let filename = "player animation";
         let animations = animationData["meta"].frameTags;
         for (var i = 0; i < animations.length; i++) {
@@ -98,9 +105,14 @@ class character {
         } else {
             ctx.drawImage(playerShadow, this.pos.x-this.imageWidth/3.5, this.pos.y+2)
         }
-
         // HITBOX
-        this.hitbox.x = this.pos.x - this.width /2.2;
+        if (this.animation.includes("Left") || this.animation.includes("Right")) {
+            this.width = 22
+            this.hitbox.x = this.pos.x - this.width /2.8;
+        } else {
+            this.width = 40
+            this.hitbox.x = this.pos.x - this.width /2.2;
+        }
         this.hitbox.y = this.pos.y-this.pos.z - (this.length+this.uphit)
         //console.log(this.pos.z);
         if (this.pos.z > 0) {

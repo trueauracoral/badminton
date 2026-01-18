@@ -32,21 +32,25 @@ class ball {
 
     draw() {
         //SHADOW
-        ctx.globalAlpha = 0.5;
+        let darkness = 1 - (this.pos.z / 150)
+        //console.log(darkness)
+        ctx.globalAlpha = darkness;
         this.groundCenter.x = this.pos.x-4
         this.groundCenter.y = this.pos.y-4;
         ctx.drawImage(ballShadow,this.groundCenter.x,this.groundCenter.y)
         ctx.globalAlpha = 1.0;
         
         // Vertical Height line
+        ctx.globalAlpha = 0.8
         ctx.beginPath();
-        ctx.strokeStyle="#CAD4E3"
+        ctx.strokeStyle="#fbf236"
         ctx.lineWidth = 2;
         ctx.setLineDash([2, 2]);
         ctx.moveTo(this.pos.x+6, this.pos.y-this.pos.z+16);
         ctx.lineTo(this.pos.x+6, this.pos.y+6);
         ctx.stroke();
         ctx.setLineDash([0,0])
+        ctx.globalAlpha = 1
 
         // IMAGE
         // Change this later to subtract by size of the ball. 9/17/25
