@@ -198,9 +198,9 @@ Make it so that way your shadow highlights when you can hit the ball.
 Removed the sideview
 ## 12/23/25
 Fixed opponent  going through the net when diagnoal
-## 1/5/25
+## 1/5/26
 Implemented points and now it feels like a real game.
-## 1/18/25
+## 1/18/26
 - Fixed the sideways
 - Made the shadow grow darker the closer it is to the ground
 - made the dashed line from the ball transparent and yellow
