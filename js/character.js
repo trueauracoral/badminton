@@ -16,8 +16,9 @@ class character {
         this.uphit = 20;
         this.gravity = 40;
         this.points = 0;
+        this.dash = 0;
         // Animation
-        this.animation = "Walk Right";
+        this.animation = "Walk Forward";
         this.previousAnimation = this.animation;
         this.sprite = playerSprite;
         this.moving = false;
@@ -40,7 +41,7 @@ class character {
         this.HIT = false;
     }
     update() {
-        console.log(this.animation)
+        //console.log(this.animation)
         this.pos.z += this.velocity.z *dt;
         this.velocity.z -= this.gravity * dt; // gravity pulls down
         if (this.pos.z <= 0) {

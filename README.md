@@ -19,10 +19,11 @@
             - [X] Backward
     - [X] Player 2
 ## Code
-- [ ] Need to make it so that way the player can decide when and how to shoot the ball. in 2 player it must randomly select who shoots.
-    - A: 11/23/25
 - [ ] Make an indicator when the ball has gone offscreen
     - ASSIGNED: (10/31/25)
+- [X] Need to make it so that way the player can decide when and how to shoot the ball. in 2 player it must randomly select who shoots.
+    - A: 11/23/25
+    - C: 1/24/26
 - [X] Need to make AI so that way he shoots the ball where the player isn't located but also not outside the trapezoid
     - A: 11/15/25
 - [X] Make it so that way based on the direction l/r the player goes that's where the ball goes.
@@ -204,7 +205,12 @@ Implemented points and now it feels like a real game.
 - Fixed the sideways
 - Made the shadow grow darker the closer it is to the ground
 - made the dashed line from the ball transparent and yellow
-
+## 1/25/26
+Added wrapping.
+## 1/26/26
+Made it so that way it will pause a bit when you lose
+# 2/1/26
+Started work on the dash meter
 # User Reports
 ## 11/26/25
 - Users are confused that you can't just run up to the ball. You need to tap the ball and send it flying or something. Detection against this is still not working well
@@ -216,7 +222,7 @@ Implemented points and now it feels like a real game.
 - Softlock occurs when ball gets off the screen and when ball stops bouncing.
     - Need to start work on a points system and start awarding points to either player.
     - Need a reset condition on when a point is rewarded
-- [ ] Need award point when the character hits through the net.
+- [X] Need award point when the character hits through the net.
 - [ ] Does the game only work on chrome???
 - [ ] Games name is badminton and not volleyball!
 - [X] Need to have a top/bottom thing that shows player and opponent x,y 

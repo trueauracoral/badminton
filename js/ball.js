@@ -11,6 +11,7 @@ class ball {
         this.hitbox = vec2();
         this.radius = 8;
         this.groundCenter = vec2();
+        this.ballSpeed = 20
     }
     update() {
         this.pos.x += this.velocity.x * dt;
