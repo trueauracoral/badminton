@@ -22,7 +22,7 @@ opponent.sprite = opponentSprite;
 opponent.angle = Math.PI/2;
 opponent.neutral = opponent.angle;
 opponent.center.y -= 20;
-opponent.drawArrow = true;
+opponent.drawArrow = false;
 let lasthit = "nobody";
 
 reset()
@@ -255,14 +255,12 @@ function gameUpdate() {
     //console.log("collision: " + circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length));
     // Bounce off backwall
     if (Ball.pos.y < 10) {
-        Ball.pos.y = height - 10;
         Ball.velocity.y += 20;
         //Ball.velocity.y = 30;
         //Ball.velocity.x *= -1;
     } 
     if (Ball.pos.y > height - 10) {
-        Ball.pos.y = 10
-        Ball.velocity.y -= 20
+        Ball.velocity.y += 20
     }
     let netCussion = 5
     //console.log(`${netH - 20} > ${Ball.pos.z} | ${netY+(netH-netCussion) -5} < ${Ball.pos.y - 10} < ${netY+(netH+netCussion) -5}`)
@@ -289,7 +287,8 @@ function gameUpdate() {
     }
     // Has the ball touched ground
     //console.log(Ball.pos.z)
-    if (Ball.pos.z == 0 || netH - 10 > Ball.pos.z && (Ball.pos.y-8 <netY+(netH+netCussion) -5 && Ball.pos.y > netY+(netH-netCussion) -5)) {
+    let nethit = netH - 10 > Ball.pos.z && (Ball.pos.y-8 <netY+(netH+netCussion) -5 && Ball.pos.y > netY+(netH-netCussion) -5)
+    if (outOfBounds || Ball.pos.z == 0 || nethit) {
         if (lasthit == "nobody") {
             reset()
             Ball.pos.x = Character.pos.x - 5
@@ -313,9 +312,9 @@ function gameUpdate() {
         }
         pause = true
     }
-    if (Character.dash < dashSize.x)
-    Character.dash += 7*dt;
-    console.log(Character.dash)
+    // if (Character.dash < dashSize.x)
+    // Character.dash += 7*dt;
+    // console.log(Character.dash)
     updateInput(dt);
     Character.update();
     AImovement(dt);
@@ -341,8 +340,8 @@ let bottomLeft = { x: width * sideLines, y: height - height * verticalLines };
 let bottomRight = { x: width - (width * sideLines), y: height - height * verticalLines };
 let vertices = [topLeft, topRight, bottomRight, bottomLeft];
 // DASH
-let startDashCoords = vec2(width*0.7, height*0.9)
-let dashSize = vec2(91, 16)
+// let startDashCoords = vec2(width*0.7, height*0.9)
+// let dashSize = vec2(91, 16)
 function gameDraw() {
     ctx.strokeStyle="white";
     ctx.lineWidth = 2;
@@ -416,14 +415,14 @@ function gameDraw() {
     drawPixelText(opponent.points, width / 2 - 6, 30, false, "white");
     
     // Dash Bar Percentage
-    ctx.beginPath();
-    ctx.fillStyle = "#222034"
-    ctx.fillRect(startDashCoords.x, startDashCoords.y, dashSize.x+4, dashSize.y+4)
-    ctx.fillStyle = "#cbdbfc"
-    ctx.fillRect(startDashCoords.x+2, startDashCoords.y+2, dashSize.x, dashSize.y)
-    ctx.fillStyle = "#99e550"
-    ctx.fillRect(startDashCoords.x+2, startDashCoords.y+2, Character.dash, dashSize.y)
-    ctx.stroke()
+    // ctx.beginPath();
+    // ctx.fillStyle = "#222034"
+    // ctx.fillRect(startDashCoords.x, startDashCoords.y, dashSize.x+4, dashSize.y+4)
+    // ctx.fillStyle = "#cbdbfc"
+    // ctx.fillRect(startDashCoords.x+2, startDashCoords.y+2, dashSize.x, dashSize.y)
+    // ctx.fillStyle = "#99e550"
+    // ctx.fillRect(startDashCoords.x+2, startDashCoords.y+2, Character.dash, dashSize.y)
+    // ctx.stroke()
 }
 let lastTime = performance.now();
 let seconds = 1;

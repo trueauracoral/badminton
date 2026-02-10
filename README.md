@@ -19,6 +19,7 @@
             - [X] Backward
     - [X] Player 2
 ## Code
+- [ ] Tell the player what caused a point
 - [ ] Make an indicator when the ball has gone offscreen
     - ASSIGNED: (10/31/25)
 - [X] Need to make it so that way the player can decide when and how to shoot the ball. in 2 player it must randomly select who shoots.
@@ -211,6 +212,9 @@ Added wrapping.
 Made it so that way it will pause a bit when you lose
 # 2/1/26
 Started work on the dash meter
+# 2/9/26
+FIxed velocity so that way it works on both sides
+delete teleport.
 # User Reports
 ## 11/26/25
 - Users are confused that you can't just run up to the ball. You need to tap the ball and send it flying or something. Detection against this is still not working well
@@ -229,4 +233,7 @@ Started work on the dash meter
 - [X] Figure out how to make it easy to hit the ball
     - Perhaps can make it so that way the shadow highlights when ball is hitable
 - IDEA to make the game more interesting: Have the ball wrap around if it's in air to the other side of the screen
-- 
+## 2/6/25
+- Hit net animation
+- Out of bounds check delete the teleport
+- mouse to control
