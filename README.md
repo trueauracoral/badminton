@@ -2,24 +2,28 @@
 
 # TODO List
 ## Art
-    - [X] Ball at different sizes
-    - [X] Net
-    - [X] Character
-        - [X] Run
-            - [X] Side
-            - [X] Forward
-            - [X] Backward
-        - [X] Stand
-            - [X] Side
-            - [X] Forward
-            - [X] Backward
-        - [X] Hit
-            - [X] Side
-            - [X] Forward
-            - [X] Backward
-    - [X] Player 2
+- [X] Ball at different sizes
+- [X] Net
+- [X] Character
+    - [X] Run
+        - [X] Side
+        - [X] Forward
+        - [X] Backward
+    - [X] Stand
+        - [X] Side
+        - [X] Forward
+        - [X] Backward
+    - [X] Hit
+        - [X] Side
+        - [X] Forward
+        - [X] Backward
+- [X] Player 2
 ## Code
+- [X] Use mouse insteaad of j and l to move arrow
+    - ADDED: 2/13/26
+    - COMPLETED: 2/14/26
 - [X] Tell the player what caused a point
+    - DONE: 2/13/26
 - [ ] Make an indicator when the ball has gone offscreen
     - ASSIGNED: (10/31/25)
 - [X] Need to make it so that way the player can decide when and how to shoot the ball. in 2 player it must randomly select who shoots.
@@ -220,7 +224,8 @@ Implemented the ability to see why a point was earned.
 Fixed a mistake with the velocity increasing.
 I think there needs to be like a logarithmic curve in how the ball speed increases.
 Need to implement dash
-
+## 2/14/26
+Implemented mouse movent
 # User Reports
 ## 11/26/25
 - Users are confused that you can't just run up to the ball. You need to tap the ball and send it flying or something. Detection against this is still not working well

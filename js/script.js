@@ -1,6 +1,6 @@
 import { character } from "./character.js";
 import { ball } from "./ball.js";
-import { vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, opponentSprite, getRandom, turn, halfHeight} from "./globals.js";
+import { scalingFactor, vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, opponentSprite, getRandom, turn, halfHeight} from "./globals.js";
 
 ctx.imageSmoothingEnabled= false;
 // Net
@@ -25,6 +25,7 @@ opponent.center.y -= 20;
 opponent.drawArrow = false;
 let lasthit = "nobody";
 let loseText = "";
+let mouseCoords = vec2();
 
 reset()
 Ball.pos.x = Character.pos.x - 5
@@ -272,12 +273,10 @@ function gameUpdate() {
     //ctx.rect(0,Ball.pos.y-10,100,3);
     //ctx.rect(0,Ball.pos.y-Ball.pos.z-8,100,3);
     //ctx.stroke();
-    if (netH - 10 > Ball.pos.z && (Ball.pos.y-8 <netY+(netH+netCussion) -5 && Ball.pos.y > netY+(netH-netCussion) -5)) {
-        //console.log("Collided!!!")
-        drawPixelText("Collided with net", 0,0)
-    }
-    drawPixelText("Out of Bounds: " + outOfBounds, 0,30);
-    drawPixelText(lasthit, 0, 15)
+    // if (netH - 10 > Ball.pos.z && (Ball.pos.y-8 <netY+(netH+netCussion) -5 && Ball.pos.y > netY+(netH-netCussion) -5)) {
+    //     //console.log("Collided!!!")
+    //     drawPixelText("Collided with net", 0,0)
+    // }
     Ball.update();
 
     // Is in field?
@@ -334,10 +333,6 @@ function gameUpdate() {
     // DEBUG 11/20/25
     DEBUG = document.querySelector('input[type=checkbox]').checked;
     //DEBUG = true;
-    drawPixelText(`P1: ${Math.round(Character.pos.x)}, ${Math.round(Character.pos.y)}`,0,height*0.9)
-    drawPixelText(`P2: ${Math.round(opponent.pos.x)}, ${Math.round(opponent.pos.y)}`,0,height*0.95)
-    drawPixelText(`Ball Z: ${Math.round(Ball.pos.z)}`,width*0.5,height*0.95)
-
 }
 // Trapezoid points
 let sideLines = 0.13;
@@ -435,6 +430,16 @@ function gameDraw() {
 
     // Lose Text
     drawPixelText(loseText, halfWidth - loseText.length*5, 50, true, "white")
+    if (DEBUG) {
+        drawPixelText("Out of Bounds: " + outOfBounds, 0,30);
+        drawPixelText(lasthit, 0, 15)
+        drawPixelText(`P1: ${Math.round(Character.pos.x)}, ${Math.round(Character.pos.y)}`,0,height*0.9)
+        drawPixelText(`P2: ${Math.round(opponent.pos.x)}, ${Math.round(opponent.pos.y)}`,0,height*0.95)
+        // 
+        drawPixelText(`Ball Z: ${Math.round(Ball.pos.z)}`,width*0.5,height*0.95)
+        // Mouse Coords
+        drawPixelText(`${mouseCoords.x}, ${mouseCoords.y}`, width*0.8, height*0.9)
+    }
 }
 let lastTime = performance.now();
 let seconds = 1;
@@ -516,6 +521,18 @@ window.addEventListener("keyup", (e) => {
     }
 });
 
+document.addEventListener('pointermove', (event) => {
+    //console.log("MOUSE CLICKED");
+    mouseCoords = getMousePosition(canvas, event);
+    //console.log(mouseCoords);
+})
+function getMousePosition(canvas, event) {
+    let rect = canvas.getBoundingClientRect();
+    let x = Math.floor((event.clientX - rect.left) / scalingFactor);
+    let y = Math.floor((event.clientY - rect.top) / scalingFactor);
+    return {x: x, y: y};
+}
+
 function updateInput(dt) {
     let speed = Character.speed * dt;
     let shootSpeed = 2*dt;
@@ -562,29 +579,30 @@ function updateInput(dt) {
         Character.pos.x += addX * speed * 2;
     }
     // Shoot Left/Right
+    Character.angle = Math.atan2(mouseCoords.y-Character.actualCenterY, mouseCoords.x-Character.actualCenterX)
     //console.log("MAX: " + -1*shotRange);
     //console.log("NEW: " + Character.angle + shootSpeed * dt)
-    if (keys.KeyJ) {
-        if (Character.angle - shootSpeed > -1*(Math.PI*3)/4) {
-            Character.angle -= shootSpeed;
-        }
-    }
-    if (keys.KeyL) {
-        if (Character.angle + shootSpeed < -1 *(Math.PI)/4) {
-            Character.angle += shootSpeed;
-        }
-    }
-    if (keys.KeyI) {
-        console.log("hello");
-        if (Character.force < 40) {
-            Character.force += ((speed/dt)-10)*dt;
-            if (Character.colorG > 0 && Character.colorB > 0) {
-                Character.colorG -= 200*dt;
-                Character.colorB -= 200*dt;
-            }
-        }
-        console.log(Character.force);
-    }
+    // if (keys.KeyJ) {
+    //     if (Character.angle - shootSpeed > -1*(Math.PI*3)/4) {
+    //         Character.angle -= shootSpeed;
+    //     }
+    // }
+    // if (keys.KeyL) {
+    //     if (Character.angle + shootSpeed < -1 *(Math.PI)/4) {
+    //         Character.angle += shootSpeed;
+    //     }
+    // }
+    // if (keys.KeyI) {
+    //     console.log("hello");
+    //     if (Character.force < 40) {
+    //         Character.force += ((speed/dt)-10)*dt;
+    //         if (Character.colorG > 0 && Character.colorB > 0) {
+    //             Character.colorG -= 200*dt;
+    //             Character.colorB -= 200*dt;
+    //         }
+    //     }
+    //     console.log(Character.force);
+    // }
 }
 let lengthIndex = 0;
 //document.addEventListener("keydown", e => {
