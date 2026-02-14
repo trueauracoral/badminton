@@ -19,7 +19,7 @@
             - [X] Backward
     - [X] Player 2
 ## Code
-- [ ] Tell the player what caused a point
+- [X] Tell the player what caused a point
 - [ ] Make an indicator when the ball has gone offscreen
     - ASSIGNED: (10/31/25)
 - [X] Need to make it so that way the player can decide when and how to shoot the ball. in 2 player it must randomly select who shoots.
@@ -210,11 +210,17 @@ Implemented points and now it feels like a real game.
 Added wrapping.
 ## 1/26/26
 Made it so that way it will pause a bit when you lose
-# 2/1/26
+## 2/1/26
 Started work on the dash meter
-# 2/9/26
+## 2/9/26
 FIxed velocity so that way it works on both sides
 delete teleport.
+## 2/13/26
+Implemented the ability to see why a point was earned.
+Fixed a mistake with the velocity increasing.
+I think there needs to be like a logarithmic curve in how the ball speed increases.
+Need to implement dash
+
 # User Reports
 ## 11/26/25
 - Users are confused that you can't just run up to the ball. You need to tap the ball and send it flying or something. Detection against this is still not working well

@@ -12,7 +12,7 @@ let netY = height*0.5 - netH;
 // Globals
 let TICK = 0;
 let DEBUG = false;
-let pause = false;
+let pause = true;
 
 let Ball = new ball(vec2(100, 223));
 let Character = new character();
@@ -24,6 +24,7 @@ opponent.neutral = opponent.angle;
 opponent.center.y -= 20;
 opponent.drawArrow = false;
 let lasthit = "nobody";
+let loseText = "";
 
 reset()
 Ball.pos.x = Character.pos.x - 5
@@ -240,7 +241,7 @@ function gameUpdate() {
         Ball.velocity.z = 45;
         Ball.velocity.y = (Ball.ballSpeed);
         Ball.ballSpeed+= ballIncrement
-        Ball.velocity.y = Character.force;
+        //Ball.velocity.y = Character.force;
         Ball.velocity.x = opponent.newPointX - opponent.actualCenterX;
         opponent.HIT = true;
         Ball.pos.z += 14;
@@ -288,7 +289,15 @@ function gameUpdate() {
     // Has the ball touched ground
     //console.log(Ball.pos.z)
     let nethit = netH - 10 > Ball.pos.z && (Ball.pos.y-8 <netY+(netH+netCussion) -5 && Ball.pos.y > netY+(netH-netCussion) -5)
-    if (outOfBounds || Ball.pos.z == 0 || nethit) {
+    let groundhit = Ball.pos.z == 0
+    if (outOfBounds || groundhit || nethit) {
+        if (outOfBounds) {
+            loseText = "BALL OUT OF BOUNDS"
+        } else if (groundhit) {
+            loseText = "BALL HIT THE GROUND"
+        } else if (nethit) {
+            loseText = "BALL HIT THE NET"
+        }
         if (lasthit == "nobody") {
             reset()
             Ball.pos.x = Character.pos.x - 5
@@ -423,6 +432,9 @@ function gameDraw() {
     // ctx.fillStyle = "#99e550"
     // ctx.fillRect(startDashCoords.x+2, startDashCoords.y+2, Character.dash, dashSize.y)
     // ctx.stroke()
+
+    // Lose Text
+    drawPixelText(loseText, halfWidth - loseText.length*5, 50, true, "white")
 }
 let lastTime = performance.now();
 let seconds = 1;
@@ -440,7 +452,7 @@ function gameLoop() {
         gameUpdate();
     } else {
         timePassed += dt
-        drawPixelText(seconds, halfWidth - 5, 60, false, "white");
+        //drawPixelText(seconds, halfWidth - 5, 60, false, "white");
         if (timePassed >= 1) {
             if (seconds > 0) {
                 seconds--;
@@ -448,6 +460,7 @@ function gameLoop() {
                 pause = false
                 seconds = 1
                 timePassed = 0;
+                loseText = "";
             }
             timePassed -= 1;
         }
@@ -587,5 +600,5 @@ let lengthIndex = 0;
 //        Ball.velocity.y = 15;   
 //    }
 //});
-export { Ball, dt, TICK, DEBUG, netH, netY, netX };
+export { pause, Ball, dt, TICK, DEBUG, netH, netY, netX };
 gameLoop();

@@ -1,5 +1,5 @@
 import { vec2, loadImage, drawPixelText, createAudio, ctx, width, height, canvas, halfWidth, halfHeight, playerSprite, opponentSprite, playerShadow, playerShadowHit } from "./globals.js";
-import { Ball, dt, TICK, DEBUG, netH, netY} from "./script.js"
+import { pause, Ball, dt, TICK, DEBUG, netH, netY} from "./script.js"
 import animationData from "../assets/player animation.json" with { type: "json" };
 
 class character {
@@ -90,7 +90,10 @@ class character {
                     frame.w, frame.h);
                 if (TICK % 8 == 0) {
                     if (animations[i].from +this.frameNumber + 1 <= animations[i].to) {
-                        this.frameNumber++
+                        // this.frameNumber++
+                        if (!pause) {
+                            this.frameNumber++
+                        }
                     } else {
                         this.frameNumber = 0;
                     }

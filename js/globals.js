@@ -22,6 +22,7 @@ let playerShadow = loadImage("./assets/player shadow.png")
 let playerShadowHit = loadImage("./assets/player shadow-hit.png")
 
 let turn = 0
+//let pause = false;
 
 
 export { canvas, ctx, scalingFactor, width, height, halfWidth, halfHeight, ballImage, ballShadow, playerSprite, opponentSprite, playerShadow, ballShadowHit, playerShadowHit, turn}
@@ -40,15 +41,15 @@ export function createAudio(src) {
     return audio;
 }
 
-export function drawPixelText(text, x, y, outline=false, color="black") {
+export function drawPixelText(text, x, y, outline=false, color="#2e2c41") {
     ctx.imageSmoothingEnabled = false; 
     ctx.textBaseline = 'top';
     ctx.fillStyle = color; 
     ctx.font = "16px Arial";
     if (outline) {
-        ctx.fillStyle = "#ffffff";
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'black';
+        ctx.fillStyle = color;
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#2e2c41';
         ctx.strokeText(text, x, y);
     }
 
