@@ -10,7 +10,7 @@
 
     <body>
         <label class="switch">
-            <input type="checkbox">
+            <input id="debug" type="checkbox" oninput="debugOn(this.checked)">
             <span>DEBUG</span>
         </label>
         <canvas id="canvas"></canvas>

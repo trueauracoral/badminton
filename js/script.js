@@ -33,6 +33,12 @@ Ball.pos.y = Character.pos.y
 Ball.pos.z = 100;
 lasthit = "character"
 
+function debugOn(value) {
+    DEBUG = document.getElementById("debug").checked;
+}
+
+document.getElementById("debug").oninput = function() {debugOn()};
+
 // https://www.jeffreythompson.org/collision-detection/circle-rect.php
 function circleRect(cx, cy, radius, rx, ry, rw, rh) {
     // temporary variables to set edges for testing
@@ -280,17 +286,23 @@ function gameUpdate() {
     Ball.update();
 
     // Is in field?
-    if (polyPoint(vertices, Ball.pos.x-4, Ball.pos.y-4)) {
-        outOfBounds = false;
-    } else {
-        outOfBounds = true;
-    }
+    outOfBounds = polyPoint(vertices, Ball.pos.x-4, Ball.pos.y-4)
     // Has the ball touched ground
     //console.log(Ball.pos.z)
     let nethit = netH - 10 > Ball.pos.z && (Ball.pos.y-8 <netY+(netH+netCussion) -5 && Ball.pos.y > netY+(netH-netCussion) -5)
     let groundhit = Ball.pos.z == 0
-    if (outOfBounds || groundhit || nethit) {
-        if (outOfBounds) {
+    // if (Character.dash < dashSize.x)
+    // Character.dash += 7*dt;
+    // console.log(Character.dash)
+    updateInput(dt);
+    Character.update();
+    AImovement(dt);
+    opponent.update();
+    // TICK COUNTER
+    TICK++;
+    
+    if (outOfBounds == false || groundhit || nethit) {
+        if (outOfBounds == false) {
             loseText = "BALL OUT OF BOUNDS"
         } else if (groundhit) {
             loseText = "BALL HIT THE GROUND"
@@ -320,18 +332,8 @@ function gameUpdate() {
         }
         pause = true
     }
-    // if (Character.dash < dashSize.x)
-    // Character.dash += 7*dt;
-    // console.log(Character.dash)
-    updateInput(dt);
-    Character.update();
-    AImovement(dt);
-    opponent.update();
-    // TICK COUNTER
-    TICK++;
-
     // DEBUG 11/20/25
-    DEBUG = document.querySelector('input[type=checkbox]').checked;
+    //DEBUG = document.querySelector('input[type=checkbox]').checked;
     //DEBUG = true;
 }
 // Trapezoid points
@@ -579,7 +581,7 @@ function updateInput(dt) {
         Character.pos.x += addX * speed * 2;
     }
     // Shoot Left/Right
-    Character.angle = Math.atan2(mouseCoords.y-Character.actualCenterY, mouseCoords.x-Character.actualCenterX)
+    Character.angle = Math.atan2(Math.abs(mouseCoords.y-Character.actualCenterY), Character.actualCenterX-mouseCoords.x)+Math.PI
     //console.log("MAX: " + -1*shotRange);
     //console.log("NEW: " + Character.angle + shootSpeed * dt)
     // if (keys.KeyJ) {
