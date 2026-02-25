@@ -1,6 +1,6 @@
 import { character } from "./character.js";
 import { ball } from "./ball.js";
-import { scalingFactor, vec2, loadImage, drawPixelText, ctx, width, height, canvas, halfWidth, opponentSprite, getRandom, turn, halfHeight} from "./globals.js";
+import { scalingFactor, vec2, loadImage, loadAudio, drawPixelText, ctx, width, height, canvas, halfWidth, opponentSprite, getRandomInt, getRandom, turn, halfHeight} from "./globals.js";
 
 ctx.imageSmoothingEnabled= false;
 // Net
@@ -14,6 +14,7 @@ let TICK = 0;
 let DEBUG = false;
 let pause = true;
 
+// GAME STARTING!!
 let Ball = new ball(vec2(100, 223));
 let Character = new character();
 let opponent = new character();
@@ -33,6 +34,21 @@ Ball.pos.y = Character.pos.y
 Ball.pos.z = 100;
 lasthit = "character"
 
+// Sounds
+let numsounds = 23
+let hitsounds = []
+for (let hitsound = 1; hitsound < numsounds; hitsound++) {
+    hitsounds.push(`./sound/hit-${hitsound.toString().padStart(2,'0')}.mp3`)
+}
+for (let i = 0; i < hitsounds.length; i++) {
+    hitsounds[i] = loadAudio(hitsounds[i])
+}
+
+function playHitSound() {
+    let sound = hitsounds[getRandomInt(numsounds)]
+    sound.play();
+}
+// DEBUG
 function debugOn(value) {
     DEBUG = document.getElementById("debug").checked;
 }
@@ -239,10 +255,12 @@ function gameUpdate() {
         Ball.pos.z += 14;
         //console.log("I HIT it");
         lasthit = "character"
+        playHitSound()
     } 
     //console.log(Character.HIT);
     if (TICK % 50 == 0) {
         Character.HIT = false;
+        opponent.HIT = false;
     }
     if (ballC2Collision == "t" && (opponent.pos.y < Ball.pos.y + 10 && opponent.pos.y > Ball.pos.y - 10) && opponent.HIT == false) {
         Ball.velocity.z = 45;
@@ -254,9 +272,11 @@ function gameUpdate() {
         Ball.pos.z += 14;
         //console.log("I HIT it");
         lasthit = "opponent"
+        playHitSound();
     } 
     if (TICK % 50 == 0) {
         opponent.HIT = false;
+        Character.HIT = false;
     }
     ballC1Collision = circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, Character.hitbox.x, Character.hitbox.y, Character.width, Character.length);
     ballC2Collision = circleRect(Ball.hitbox.x, Ball.hitbox.y, Ball.radius, opponent.hitbox.x, opponent.hitbox.y, opponent.width, opponent.length)

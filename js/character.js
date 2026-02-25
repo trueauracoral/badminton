@@ -1,4 +1,4 @@
-import { vec2, loadImage, drawPixelText, createAudio, ctx, width, height, canvas, halfWidth, halfHeight, playerSprite, opponentSprite, playerShadow, playerShadowHit } from "./globals.js";
+import { vec2, loadImage, drawPixelText, loadAudio, ctx, width, height, canvas, halfWidth, halfHeight, playerSprite, opponentSprite, playerShadow, playerShadowHit } from "./globals.js";
 import { pause, Ball, dt, TICK, DEBUG, netH, netY} from "./script.js"
 import animationData from "../assets/player animation.json" with { type: "json" };
 

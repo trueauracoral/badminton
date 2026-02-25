@@ -76,8 +76,9 @@
     - ASSIGNED: (10/31/25)
     - COMPLETED: (10/31/25)
 ## SFX
-- [ ] Hand slapping ball various sounds
+- [X] Hand slapping ball various sounds
     - ASSIGNED: (10/31/25)
+    - COMPLETED: (2/21/26)
 - ball hitting net
 - button pressing sounds
 - sound for cranking the arrow
@@ -226,6 +227,8 @@ I think there needs to be like a logarithmic curve in how the ball speed increas
 Need to implement dash
 ## 2/14/26
 Implemented mouse movent
+## 2/21/26
+Made sounds for players hitting the ball.
 # User Reports
 ## 11/26/25
 - Users are confused that you can't just run up to the ball. You need to tap the ball and send it flying or something. Detection against this is still not working well
@@ -248,3 +251,8 @@ Implemented mouse movent
 - Hit net animation
 - Out of bounds check delete the teleport
 - mouse to control
+## 2/15/25
+one aims it around you, the next level tries going away from you, and the third one goes to the furthest spot or something
+lower level ai will just randomly throw the ball at you
+where as a smart ai will throw it at greatest distance.
+either at the furthest corner with high power

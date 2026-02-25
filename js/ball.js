@@ -1,4 +1,4 @@
-import { vec2, loadImage, drawPixelText, createAudio, ctx, width, height, canvas, halfWidth, halfHeight, playerSprite, opponentSprite, playerShadow, ballShadow, ballImage } from "./globals.js";
+import { vec2, loadImage, drawPixelText, loadAudio, ctx, width, height, canvas, halfWidth, halfHeight, playerSprite, opponentSprite, playerShadow, ballShadow, ballImage } from "./globals.js";
 import { dt, TICK, DEBUG} from "./script.js"
 
 class ball {

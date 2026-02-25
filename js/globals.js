@@ -32,12 +32,14 @@ export function loadImage(src) {
     img.src = src;
     return img;
 }
-export function createAudio(src) {
+export function loadAudio(src) {
     var audio = document.createElement('audio');
     audio.volume = 1;
     //audio.loop   = options.loop;
     audio.src = src;
     audio.playbackRate = 4;
+    audio.load()
+    audio.preload = "auto";
     return audio;
 }
 
@@ -57,6 +59,10 @@ export function drawPixelText(text, x, y, outline=false, color="#2e2c41") {
 }
 export function vec2(x, y) {
     return {x: x, y: y};
+}
+//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+export function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
 
 //https://stackoverflow.com/a/1527820/24903843
